@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE locale SYSTEM "../../../dtd/locale.dtd">
+
+<locale name="en_US" full_name="English">
+    <message key="plugins.generic.skzEditorialDecisionSupport.displayName">SKZ Editorial Decision Support</message>
+    <message key="plugins.generic.skzEditorialDecisionSupport.description">Integrates SKZ autonomous agents decision engines with OJS editorial workflow to provide AI-powered decision recommendations and analytics.</message>
+    <message key="plugins.generic.skzEditorialDecisionSupport.decisionRecommendation">Decision Recommendation</message>
+    <message key="plugins.generic.skzEditorialDecisionSupport.aiRecommendation">AI Recommendation</message>
+    <message key="plugins.generic.skzEditorialDecisionSupport.confidence">Confidence</message>
+    <message key="plugins.generic.skzEditorialDecisionSupport.reasoning">Reasoning</message>
+    <message key="plugins.generic.skzEditorialDecisionSupport.alternatives">Alternative Decisions</message>
+    <message key="plugins.generic.skzEditorialDecisionSupport.serviceUnavailable">Decision support service is currently unavailable</message>
+    <message key="plugins.generic.skzEditorialDecisionSupport.qualityScore">Quality Score</message>
+    <message key="plugins.generic.skzEditorialDecisionSupport.reviewConsensus">Review Consensus</message>
+    <message key="plugins.generic.skzEditorialDecisionSupport.decisionHistory">Decision History</message>
+</locale>

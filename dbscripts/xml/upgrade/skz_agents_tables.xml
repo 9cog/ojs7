@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data SYSTEM "../dtd/xmlschema.dtd">
+
+<!--
+  * SKZ Autonomous Agents Database Schema
+  * Database migration script for agent-related tables
+  -->
+
+<data>
+    <sql>
+        <query>
+            CREATE TABLE IF NOT EXISTS agent_memory (
+                agent_memory_id BIGINT NOT NULL AUTO_INCREMENT,
+                agent_id VARCHAR(100) NOT NULL,
+                memory_type ENUM('vector', 'knowledge', 'experience', 'context') NOT NULL,
+                content TEXT NOT NULL,
+                vector_embedding JSON,
+                importance_score FLOAT DEFAULT 0.5,
+                context_data JSON,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                expires_at TIMESTAMP NULL,
+                PRIMARY KEY (agent_memory_id),
+                INDEX idx_agent_memory_agent_type (agent_id, memory_type),
+                INDEX idx_agent_memory_importance (importance_score DESC),
+                INDEX idx_agent_memory_created (created_at DESC),
+                INDEX idx_agent_memory_expires (expires_at)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        </query>
+    </sql>
+    
+    <sql>
+        <query>
+            CREATE TABLE IF NOT EXISTS agent_decisions (
+                agent_decision_id BIGINT NOT NULL AUTO_INCREMENT,
+                agent_id VARCHAR(100) NOT NULL,
+                decision_type VARCHAR(100) NOT NULL,
+                context_data JSON,
+                decision_result JSON,
+                confidence_score FLOAT,
+                reasoning TEXT,
+                related_manuscript_id BIGINT NULL,
+                related_reviewer_id BIGINT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                executed_at TIMESTAMP NULL,
+                outcome_verified BOOLEAN DEFAULT FALSE,
+                outcome_success BOOLEAN NULL,
+                PRIMARY KEY (agent_decision_id),
+                INDEX idx_agent_decisions_agent_type (agent_id, decision_type),
+                INDEX idx_agent_decisions_confidence (confidence_score DESC),
+                INDEX idx_agent_decisions_created (created_at DESC),
+                INDEX idx_agent_decisions_manuscript (related_manuscript_id),
+                FOREIGN KEY (related_manuscript_id) REFERENCES submissions(submission_id) ON DELETE SET NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        </query>
+    </sql>
+    
+    <sql>
+        <query>
+            CREATE TABLE IF NOT EXISTS agent_performance (
+                agent_performance_id BIGINT NOT NULL AUTO_INCREMENT,
+                agent_id VARCHAR(100) NOT NULL,
+                metric_name VARCHAR(100) NOT NULL,
+                metric_value FLOAT,
+                metric_unit VARCHAR(50),
+                context_data JSON,
+                measurement_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (agent_performance_id),
+                INDEX idx_agent_performance_agent_metric (agent_id, metric_name),
+                INDEX idx_agent_performance_time (measurement_time DESC),
+                INDEX idx_agent_performance_value (metric_value)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        </query>
+    </sql>
+    
+    <sql>
+        <query>
+            CREATE TABLE IF NOT EXISTS agent_communications (
+                agent_communication_id BIGINT NOT NULL AUTO_INCREMENT,
+                from_agent_id VARCHAR(100) NOT NULL,
+                to_agent_id VARCHAR(100) NOT NULL,
+                message_type VARCHAR(100) NOT NULL,
+                message_content JSON NOT NULL,
+                priority ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
+                status ENUM('pending', 'delivered', 'processed', 'failed') DEFAULT 'pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                delivered_at TIMESTAMP NULL,
+                processed_at TIMESTAMP NULL,
+                response_data JSON,
+                PRIMARY KEY (agent_communication_id),
+                INDEX idx_agent_comm_from_to (from_agent_id, to_agent_id),
+                INDEX idx_agent_comm_status (status),
+                INDEX idx_agent_comm_priority (priority),
+                INDEX idx_agent_comm_created (created_at DESC)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        </query>
+    </sql>
+    
+    <sql>
+        <query>
+            CREATE TABLE IF NOT EXISTS agent_workflows (
+                agent_workflow_id BIGINT NOT NULL AUTO_INCREMENT,
+                workflow_name VARCHAR(200) NOT NULL,
+                initiating_agent_id VARCHAR(100) NOT NULL,
+                participating_agents JSON NOT NULL,
+                workflow_data JSON,
+                current_step INT DEFAULT 1,
+                total_steps INT,
+                status ENUM('pending', 'running', 'completed', 'failed', 'cancelled') DEFAULT 'pending',
+                started_at TIMESTAMP NULL,
+                completed_at TIMESTAMP NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (agent_workflow_id),
+                INDEX idx_agent_workflows_initiating (initiating_agent_id),
+                INDEX idx_agent_workflows_status (status),
+                INDEX idx_agent_workflows_created (created_at DESC)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        </query>
+    </sql>
+    
+    <sql>
+        <query>
+            CREATE TABLE IF NOT EXISTS agent_learning_data (
+                agent_learning_id BIGINT NOT NULL AUTO_INCREMENT,
+                agent_id VARCHAR(100) NOT NULL,
+                learning_type ENUM('reinforcement', 'supervised', 'unsupervised', 'meta') NOT NULL,
+                input_data JSON,
+                expected_output JSON,
+                actual_output JSON,
+                reward_score FLOAT,
+                learning_context JSON,
+                model_version VARCHAR(50),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (agent_learning_id),
+                INDEX idx_agent_learning_agent_type (agent_id, learning_type),
+                INDEX idx_agent_learning_reward (reward_score DESC),
+                INDEX idx_agent_learning_created (created_at DESC)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        </query>
+    </sql>
+    
+    <sql>
+        <query>
+            CREATE TABLE IF NOT EXISTS agent_configurations (
+                agent_config_id BIGINT NOT NULL AUTO_INCREMENT,
+                agent_id VARCHAR(100) NOT NULL UNIQUE,
+                config_data JSON NOT NULL,
+                version VARCHAR(20) DEFAULT '1.0.0',
+                is_active BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (agent_config_id),
+                UNIQUE INDEX idx_agent_config_agent (agent_id),
+                INDEX idx_agent_config_active (is_active)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        </query>
+    </sql>
+    
+    <sql>
+        <query>
+            CREATE TABLE IF NOT EXISTS agent_health_status (
+                agent_health_id BIGINT NOT NULL AUTO_INCREMENT,
+                agent_id VARCHAR(100) NOT NULL,
+                status ENUM('healthy', 'degraded', 'unhealthy', 'offline') NOT NULL,
+                response_time FLOAT,
+                cpu_usage FLOAT,
+                memory_usage FLOAT,
+                error_count INT DEFAULT 0,
+                last_heartbeat TIMESTAMP,
+                health_details JSON,
+                checked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (agent_health_id),
+                INDEX idx_agent_health_agent (agent_id),
+                INDEX idx_agent_health_status (status),
+                INDEX idx_agent_health_checked (checked_at DESC),
+                INDEX idx_agent_health_heartbeat (last_heartbeat DESC)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        </query>
+    </sql>
+</data>

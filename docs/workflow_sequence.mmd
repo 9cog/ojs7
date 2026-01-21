@@ -1,0 +1,103 @@
+sequenceDiagram
+    participant USER as User Interface
+    participant OJS as OJS Core System
+    participant ORCH as Agent Orchestrator
+    participant A1 as Research Discovery
+    participant A2 as Submission Assistant
+    participant A3 as Editorial Orchestration
+    participant A4 as Review Coordination
+    participant A5 as Content Quality
+    participant A6 as Publishing Production
+    participant A7 as Analytics Monitor
+    participant DB as Database
+    participant EXT as External APIs
+    
+    Note over USER,EXT: Manuscript Submission & Processing Workflow
+    
+    %% Submission Phase
+    USER->>OJS: Submit Manuscript
+    OJS->>ORCH: Trigger Agent Workflow
+    ORCH->>A7: Log Submission Event
+    A7->>DB: Store Event Data
+    
+    %% Research Discovery Phase
+    ORCH->>A1: Analyze Research Context
+    A1->>EXT: Query INCI Database
+    A1->>EXT: Analyze Patent Landscape
+    EXT-->>A1: Return Analysis Data
+    A1->>A7: Report Discovery Metrics
+    A1->>ORCH: Research Analysis Complete
+    
+    %% Quality Assessment Phase
+    ORCH->>A2: Initiate Quality Assessment
+    A2->>A2: Validate INCI Compliance
+    A2->>A2: Review Safety Protocols
+    A2->>A2: Analyze Statistical Methods
+    A2->>A5: Request Scientific Validation
+    A5->>A5: Perform Methodology Review
+    A5->>A2: Validation Results
+    A2->>A7: Report Quality Metrics
+    A2->>ORCH: Assessment Complete
+    
+    %% Editorial Orchestration Phase
+    ORCH->>A3: Initiate Editorial Process
+    A3->>A4: Request Reviewer Assignment
+    A4->>EXT: Query Reviewer Database
+    A4->>A4: Match Expertise Requirements
+    A4->>A4: Check Availability & Workload
+    A4->>A3: Provide Reviewer Recommendations
+    A3->>OJS: Update Editorial Dashboard
+    A3->>A7: Report Process Status
+    A3->>ORCH: Editorial Setup Complete
+    
+    %% Review Coordination Phase
+    A4->>A4: Send Review Invitations
+    A4->>A4: Monitor Response Rates
+    A4->>A4: Track Review Progress
+    A4->>A3: Report Review Status
+    
+    Note over A4,A5: Review Process Active (Days/Weeks)
+    
+    A4->>A5: Reviews Received
+    A5->>A5: Validate Review Quality
+    A5->>A5: Check Scientific Rigor
+    A5->>A3: Quality-Approved Reviews
+    
+    %% Editorial Decision Phase
+    A3->>A3: Analyze Review Consensus
+    A3->>A3: Generate Decision Recommendation
+    A3->>OJS: Present Editorial Options
+    OJS->>A3: Editorial Decision Input
+    A3->>A7: Log Decision Metrics
+    
+    %% Production Phase (if accepted)
+    alt Manuscript Accepted
+        A3->>A6: Initiate Production Process
+        A6->>A6: Format Content
+        A6->>A6: Generate Visual Elements
+        A6->>A6: Prepare Multi-channel Output
+        A6->>A6: Create Metadata
+        A6->>OJS: Publish Content
+        A6->>A7: Report Production Metrics
+        A6->>ORCH: Publication Complete
+    else Manuscript Rejected/Revision Required
+        A3->>OJS: Prepare Rejection/Revision Notice
+        A3->>A7: Log Decision Outcome
+        A3->>ORCH: Process Complete
+    end
+    
+    %% Analytics and Monitoring (Continuous)
+    loop Continuous Monitoring
+        A7->>A7: Analyze System Performance
+        A7->>A7: Track Agent Efficiency
+        A7->>A7: Monitor Quality Metrics
+        A7->>A7: Generate Insights
+        A7->>ORCH: Performance Report
+        A7->>OJS: Update Analytics Dashboard
+    end
+    
+    %% User Notification
+    ORCH->>OJS: Process Status Update
+    OJS->>USER: Notification & Results
+    
+    Note over USER,EXT: End-to-End Process: 65% Faster than Traditional OJS

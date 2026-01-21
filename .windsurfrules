@@ -1,0 +1,3 @@
+The first objective is to ensure source control automatically commits to the github repo after each run.
+Next verify that the commits are successful and sync is sont held up reimplementing the commit without typechecks.
+The commit must go through no matter what!

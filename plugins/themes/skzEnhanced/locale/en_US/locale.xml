@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE locale SYSTEM "../../../../lib/pkp/dtd/locale.dtd">
+
+<!--
+  * plugins/themes/skzEnhanced/locale/en_US/locale.xml
+  *
+  * SKZ Enhanced Theme Plugin locale data
+  -->
+<locale name="en_US" full_name="U.S. English">
+	<message key="plugins.themes.skzEnhanced.name">SKZ Enhanced Theme</message>
+	<message key="plugins.themes.skzEnhanced.description">Enhanced OJS theme with integrated autonomous agents interface components for the SKZ framework</message>
+	
+	<!-- Theme Options -->
+	<message key="plugins.themes.skzEnhanced.option.showAgentStatusBar.label">Agent Status Bar</message>
+	<message key="plugins.themes.skzEnhanced.option.showAgentStatusBar.description">Display a status bar showing the current status of all autonomous agents</message>
+	<message key="plugins.themes.skzEnhanced.option.showAgentStatusBar.enable">Show agent status bar in header</message>
+	
+	<message key="plugins.themes.skzEnhanced.option.agentTheme.label">Agent Interface Theme</message>
+	<message key="plugins.themes.skzEnhanced.option.agentTheme.description">Choose the visual theme for agent interface components</message>
+	<message key="plugins.themes.skzEnhanced.option.agentTheme.professional">Professional</message>
+	<message key="plugins.themes.skzEnhanced.option.agentTheme.modern">Modern</message>
+	<message key="plugins.themes.skzEnhanced.option.agentTheme.minimal">Minimal</message>
+	
+	<message key="plugins.themes.skzEnhanced.option.realTimeUpdates.label">Real-time Updates</message>
+	<message key="plugins.themes.skzEnhanced.option.realTimeUpdates.description">Enable real-time notifications and status updates from agents</message>
+	<message key="plugins.themes.skzEnhanced.option.realTimeUpdates.enable">Enable real-time agent updates</message>
+	
+	<message key="plugins.themes.skzEnhanced.option.workflowControls.label">Workflow Agent Controls</message>
+	<message key="plugins.themes.skzEnhanced.option.workflowControls.description">Show agent control panels in editorial workflow pages</message>
+	<message key="plugins.themes.skzEnhanced.option.workflowControls.enable">Show agent controls in workflow</message>
+	
+	<!-- Agent Status -->
+	<message key="plugins.themes.skzEnhanced.agentStatus.operational">All Systems Operational</message>
+	<message key="plugins.themes.skzEnhanced.agentStatus.warning">System Warning</message>
+	<message key="plugins.themes.skzEnhanced.agentStatus.error">System Error</message>
+	<message key="plugins.themes.skzEnhanced.agentStatus.maintenance">Maintenance Mode</message>
+	
+	<!-- Agent Actions -->
+	<message key="plugins.themes.skzEnhanced.agent.viewDetails">View Agent Details</message>
+	<message key="plugins.themes.skzEnhanced.agent.pauseAgent">Pause Agent</message>
+	<message key="plugins.themes.skzEnhanced.agent.resumeAgent">Resume Agent</message>
+	<message key="plugins.themes.skzEnhanced.agent.configure">Configure Agent</message>
+	
+	<!-- Workflow Integration -->
+	<message key="plugins.themes.skzEnhanced.workflow.agentRecommendations">Agent Recommendations</message>
+	<message key="plugins.themes.skzEnhanced.workflow.agentAnalysis">Agent Analysis</message>
+	<message key="plugins.themes.skzEnhanced.workflow.agentActions">Available Agent Actions</message>
+	<message key="plugins.themes.skzEnhanced.workflow.progressTracking">Workflow Progress</message>
+</locale>

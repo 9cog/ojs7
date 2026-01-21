@@ -1,0 +1,204 @@
+graph TB
+    subgraph "Production Environment"
+        subgraph "Load Balancer Tier"
+            LB1[Primary Load Balancer]
+            LB2[Secondary Load Balancer]
+            SSL[SSL Termination]
+        end
+        
+        subgraph "Web Application Tier"
+            WEB1[OJS Instance 1<br/>PHP-FPM + Nginx]
+            WEB2[OJS Instance 2<br/>PHP-FPM + Nginx]
+            WEB3[OJS Instance 3<br/>PHP-FPM + Nginx]
+        end
+        
+        subgraph "Agent Services Tier"
+            subgraph "Research & Analysis Cluster"
+                RD_POD1[Research Discovery Pod 1]
+                RD_POD2[Research Discovery Pod 2]
+                SA_POD1[Submission Assistant Pod 1]
+                SA_POD2[Submission Assistant Pod 2]
+            end
+            
+            subgraph "Editorial & Review Cluster"
+                EO_POD1[Editorial Orchestration Pod 1]
+                EO_POD2[Editorial Orchestration Pod 2]
+                RC_POD1[Review Coordination Pod 1]
+                RC_POD2[Review Coordination Pod 2]
+            end
+            
+            subgraph "Quality & Production Cluster"
+                CQ_POD1[Content Quality Pod 1]
+                CQ_POD2[Content Quality Pod 2]
+                PP_POD1[Publishing Production Pod 1]
+                PP_POD2[Publishing Production Pod 2]
+            end
+            
+            subgraph "Analytics Cluster"
+                AM_POD1[Analytics & Monitoring Pod 1]
+                AM_POD2[Analytics & Monitoring Pod 2]
+                AM_POD3[Analytics & Monitoring Pod 3]
+            end
+        end
+        
+        subgraph "Data Persistence Tier"
+            subgraph "Database Cluster"
+                DB_MASTER[(MySQL Master<br/>Write Operations)]
+                DB_SLAVE1[(MySQL Slave 1<br/>Read Replica)]
+                DB_SLAVE2[(MySQL Slave 2<br/>Read Replica)]
+            end
+            
+            subgraph "Cache Cluster"
+                REDIS_M1[Redis Master 1]
+                REDIS_S1[Redis Slave 1]
+                REDIS_M2[Redis Master 2]
+                REDIS_S2[Redis Slave 2]
+            end
+            
+            subgraph "File Storage"
+                NFS[NFS Cluster<br/>Shared Storage]
+                S3[Object Storage<br/>S3 Compatible]
+                BACKUP[Backup Storage<br/>Cold Storage]
+            end
+        end
+    end
+    
+    subgraph "Monitoring & Management"
+        subgraph "Observability Stack"
+            PROMETHEUS[Prometheus<br/>Metrics Collection]
+            GRAFANA[Grafana<br/>Visualization]
+            JAEGER[Jaeger<br/>Distributed Tracing]
+            ELK[ELK Stack<br/>Centralized Logging]
+        end
+        
+        subgraph "Management Tools"
+            K8S[Kubernetes<br/>Orchestration]
+            HELM[Helm<br/>Package Management]
+            ISTIO[Istio<br/>Service Mesh]
+            VAULT[HashiCorp Vault<br/>Secrets Management]
+        end
+    end
+    
+    subgraph "External Integrations"
+        CDN[Content Delivery Network]
+        EMAIL[Email Service<br/>SendGrid/AWS SES]
+        INCI_API[INCI Database API]
+        PATENT_API[Patent Database API]
+        REG_API[Regulatory APIs]
+    end
+    
+    subgraph "Security & Networking"
+        WAF[Web Application Firewall]
+        VPN[VPN Gateway]
+        SECRETS[Secret Manager]
+        AUDIT[Audit Logging]
+    end
+    
+    %% Load Balancer connections
+    SSL --> LB1
+    SSL --> LB2
+    LB1 --> WEB1
+    LB1 --> WEB2
+    LB2 --> WEB2
+    LB2 --> WEB3
+    
+    %% Web tier to agent services
+    WEB1 --> RD_POD1
+    WEB1 --> SA_POD1
+    WEB2 --> EO_POD1
+    WEB2 --> RC_POD1
+    WEB3 --> CQ_POD1
+    WEB3 --> PP_POD1
+    
+    %% Agent clustering
+    RD_POD1 --> RD_POD2
+    SA_POD1 --> SA_POD2
+    EO_POD1 --> EO_POD2
+    RC_POD1 --> RC_POD2
+    CQ_POD1 --> CQ_POD2
+    PP_POD1 --> PP_POD2
+    
+    %% Analytics connections
+    RD_POD1 --> AM_POD1
+    SA_POD1 --> AM_POD1
+    EO_POD1 --> AM_POD2
+    RC_POD1 --> AM_POD2
+    CQ_POD1 --> AM_POD3
+    PP_POD1 --> AM_POD3
+    
+    %% Database connections
+    WEB1 --> DB_MASTER
+    WEB2 --> DB_SLAVE1
+    WEB3 --> DB_SLAVE2
+    DB_MASTER --> DB_SLAVE1
+    DB_MASTER --> DB_SLAVE2
+    
+    %% Cache connections
+    RD_POD1 --> REDIS_M1
+    RD_POD2 --> REDIS_S1
+    SA_POD1 --> REDIS_M1
+    SA_POD2 --> REDIS_S1
+    EO_POD1 --> REDIS_M2
+    EO_POD2 --> REDIS_S2
+    RC_POD1 --> REDIS_M2
+    RC_POD2 --> REDIS_S2
+    
+    %% File storage connections
+    WEB1 --> NFS
+    WEB2 --> NFS
+    WEB3 --> NFS
+    PP_POD1 --> S3
+    PP_POD2 --> S3
+    DB_MASTER --> BACKUP
+    
+    %% Monitoring connections
+    AM_POD1 --> PROMETHEUS
+    AM_POD2 --> PROMETHEUS
+    AM_POD3 --> PROMETHEUS
+    PROMETHEUS --> GRAFANA
+    WEB1 --> JAEGER
+    WEB2 --> JAEGER
+    WEB3 --> JAEGER
+    K8S --> ELK
+    
+    %% Management connections
+    K8S --> HELM
+    K8S --> ISTIO
+    HELM --> VAULT
+    ISTIO --> SECRETS
+    
+    %% External connections
+    CDN --> SSL
+    WEB1 --> EMAIL
+    RD_POD1 --> INCI_API
+    RD_POD2 --> PATENT_API
+    SA_POD1 --> REG_API
+    
+    %% Security connections
+    WAF --> SSL
+    VPN --> K8S
+    SECRETS --> VAULT
+    AUDIT --> ELK
+    
+    %% Styling
+    classDef loadbalancer fill:#e8f5e8,stroke:#2e7d32,stroke-width:3px
+    classDef webapp fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef agent fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef database fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef cache fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef storage fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    classDef monitoring fill:#f9fbe7,stroke:#827717,stroke-width:2px
+    classDef management fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef external fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef security fill:#fde7f3,stroke:#ad1457,stroke-width:2px
+    
+    class LB1,LB2,SSL loadbalancer
+    class WEB1,WEB2,WEB3 webapp
+    class RD_POD1,RD_POD2,SA_POD1,SA_POD2,EO_POD1,EO_POD2,RC_POD1,RC_POD2,CQ_POD1,CQ_POD2,PP_POD1,PP_POD2,AM_POD1,AM_POD2,AM_POD3 agent
+    class DB_MASTER,DB_SLAVE1,DB_SLAVE2 database
+    class REDIS_M1,REDIS_S1,REDIS_M2,REDIS_S2 cache
+    class NFS,S3,BACKUP storage
+    class PROMETHEUS,GRAFANA,JAEGER,ELK monitoring
+    class K8S,HELM,ISTIO,VAULT management
+    class CDN,EMAIL,INCI_API,PATENT_API,REG_API external
+    class WAF,VPN,SECRETS,AUDIT security

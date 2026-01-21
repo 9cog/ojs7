@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE install SYSTEM "../../../lib/pkp/dtd/install.dtd">
+
+<!--
+  * plugins/themes/skzEnhanced/settings.xml
+  *
+  * SKZ Enhanced Theme Plugin settings and locale data
+  -->
+<install version="3.3.0.0">
+	<settings>
+		<setting>
+			<name>enabled</name>
+			<value>0</value>
+		</setting>
+	</settings>
+</install>

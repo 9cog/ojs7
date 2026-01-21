@@ -1,0 +1,68 @@
+2025-08-06 18:30:05,012 - INFO - ============================================================
+2025-08-06 18:30:05,014 - INFO - SKZ AGENTS FRAMEWORK - STARTING ALL AGENTS
+2025-08-06 18:30:05,014 - INFO - ============================================================
+2025-08-06 18:30:05,015 - INFO - Starting research_discovery on port 8001...
+2025-08-06 18:30:07,115 - ERROR - FAILED: research_discovery failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\agents\\research_discovery_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 18:30:07,115 - INFO - Starting manuscript_analysis on port 8002...
+2025-08-06 18:30:09,125 - ERROR - FAILED: manuscript_analysis failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\agents\\manuscript_analysis_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 18:30:09,126 - INFO - Starting peer_review_coordination on port 8003...
+2025-08-06 18:30:11,135 - ERROR - FAILED: peer_review_coordination failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\agents\\peer_review_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 18:30:11,135 - INFO - Starting editorial_decision on port 8004...
+2025-08-06 18:30:13,143 - ERROR - FAILED: editorial_decision failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\agents\\editorial_decision_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 18:30:13,144 - INFO - Starting publication_formatting on port 8005...
+2025-08-06 18:30:15,150 - ERROR - FAILED: publication_formatting failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\agents\\publication_formatting_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 18:30:15,150 - INFO - Starting quality_assurance on port 8006...
+2025-08-06 18:30:17,157 - ERROR - FAILED: quality_assurance failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\agents\\quality_assurance_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 18:30:17,157 - INFO - Starting workflow_orchestration on port 8007...
+2025-08-06 18:30:19,166 - ERROR - FAILED: workflow_orchestration failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\agents\\workflow_orchestration_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 18:30:19,167 - INFO - ============================================================
+2025-08-06 18:30:19,167 - INFO - AGENT STARTUP SUMMARY
+2025-08-06 18:30:19,167 - INFO - ============================================================
+2025-08-06 18:30:19,167 - INFO - Successfully started: 0 agents
+2025-08-06 18:30:19,167 - INFO - Failed to start: 7 agents
+2025-08-06 18:30:19,168 - WARNING - 
+Failed Agents: research_discovery, manuscript_analysis, peer_review_coordination, editorial_decision, publication_formatting, quality_assurance, workflow_orchestration
+2025-08-06 18:30:19,169 - INFO - 
+Overall Success Rate: 0.0%
+2025-08-06 18:30:19,169 - ERROR - DEPLOYMENT STATUS: FAILED
+2025-08-06 19:42:14,266 - INFO - ============================================================
+2025-08-06 19:42:14,267 - INFO - SKZ AGENTS FRAMEWORK - STARTING ALL AGENTS
+2025-08-06 19:42:14,267 - INFO - ============================================================
+2025-08-06 19:42:14,267 - INFO - Starting research_discovery on port 8001...
+2025-08-06 19:42:16,278 - ERROR - FAILED: research_discovery failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\oj7\\agents\\research_discovery_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 19:42:16,279 - INFO - Starting manuscript_analysis on port 8002...
+2025-08-06 19:42:18,299 - ERROR - FAILED: manuscript_analysis failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\oj7\\agents\\manuscript_analysis_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 19:42:18,300 - INFO - Starting peer_review_coordination on port 8003...
+2025-08-06 19:42:20,317 - ERROR - FAILED: peer_review_coordination failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\oj7\\agents\\peer_review_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 19:42:20,317 - INFO - Starting editorial_decision on port 8004...
+2025-08-06 19:42:22,325 - ERROR - FAILED: editorial_decision failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\oj7\\agents\\editorial_decision_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 19:42:22,325 - INFO - Starting publication_formatting on port 8005...
+2025-08-06 19:42:24,342 - ERROR - FAILED: publication_formatting failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\oj7\\agents\\publication_formatting_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 19:42:24,343 - INFO - Starting quality_assurance on port 8006...
+2025-08-06 19:42:26,350 - ERROR - FAILED: quality_assurance failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\oj7\\agents\\quality_assurance_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 19:42:26,350 - INFO - Starting workflow_orchestration on port 8007...
+2025-08-06 19:42:28,358 - ERROR - FAILED: workflow_orchestration failed to start: C:\Python313\python.exe: can't open file 'D:\\casto\\oj7\\agents\\workflow_orchestration_agent.py': [Errno 2] No such file or directory
+
+2025-08-06 19:42:28,359 - INFO - ============================================================
+2025-08-06 19:42:28,359 - INFO - AGENT STARTUP SUMMARY
+2025-08-06 19:42:28,360 - INFO - ============================================================
+2025-08-06 19:42:28,360 - INFO - Successfully started: 0 agents
+2025-08-06 19:42:28,360 - INFO - Failed to start: 7 agents
+2025-08-06 19:42:28,361 - WARNING - 
+Failed Agents: research_discovery, manuscript_analysis, peer_review_coordination, editorial_decision, publication_formatting, quality_assurance, workflow_orchestration
+2025-08-06 19:42:28,363 - INFO - 
+Overall Success Rate: 0.0%
+2025-08-06 19:42:28,363 - ERROR - DEPLOYMENT STATUS: FAILED

@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Agents Framework - Academic Publishing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .agent-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .agent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .agent-item:last-child {
+            border-bottom: none;
+        }
+
+        .agent-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-idle {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-busy {
+            background: #feebc8;
+            color: #7b341e;
+        }
+
+        .log-container {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-left: 3px solid #667eea;
+            padding-left: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background-color: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert-error {
+            background-color: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+
+        .research-results {
+            margin-top: 20px;
+        }
+
+        .paper-item {
+            background: #f7fafc;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .paper-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .paper-authors {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .paper-abstract {
+            color: #4a5568;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Autonomous Agents Framework</h1>
+            <p>Intelligent Academic Publishing Automation</p>
+        </div>
+
+        <div class="dashboard">
+            <!-- System Status Card -->
+            <div class="card">
+                <h3><span class="icon">📊</span>System Status</h3>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value" id="totalAgents">0</div>
+                        <div class="stat-label">Total Agents</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="activeAgents">0</div>
+                        <div class="stat-label">Active</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="totalMessages">0</div>
+                        <div class="stat-label">Messages</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="refreshStats()">Refresh Stats</button>
+            </div>
+
+            <!-- Agent Management Card -->
+            <div class="card">
+                <h3><span class="icon">🤖</span>Agent Management</h3>
+                <div class="form-group">
+                    <label>Agent Type:</label>
+                    <select id="agentType">
+                        <option value="research_discovery">Research Discovery Agent</option>
+                        <option value="editorial_orchestration">Editorial Orchestration Agent</option>
+                        <option value="manuscript_enhancement">Manuscript Enhancement Agent</option>
+                        <option value="content_quality">Content Quality Agent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Agent Name:</label>
+                    <input type="text" id="agentName" placeholder="Enter agent name">
+                </div>
+                <button class="btn" onclick="createAgent()">Create Agent</button>
+                <button class="btn btn-secondary" onclick="listAgents()">List Agents</button>
+            </div>
+
+            <!-- Research Tools Card -->
+            <div class="card">
+                <h3><span class="icon">🔬</span>Research Tools</h3>
+                <div class="form-group">
+                    <label>Search Query:</label>
+                    <input type="text" id="searchQuery" placeholder="Enter research query">
+                </div>
+                <div class="form-group">
+                    <label>Domain:</label>
+                    <select id="searchDomain">
+                        <option value="computer_science">Computer Science</option>
+                        <option value="medicine">Medicine</option>
+                        <option value="physics">Physics</option>
+                        <option value="biology">Biology</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="performLiteratureSearch()">Literature Search</button>
+                <button class="btn btn-secondary" onclick="performTrendAnalysis()">Trend Analysis</button>
+            </div>
+
+            <!-- Editorial Tools Card -->
+            <div class="card">
+                <h3><span class="icon">📝</span>Editorial Tools</h3>
+                <div class="form-group">
+                    <label>Manuscript ID:</label>
+                    <input type="text" id="manuscriptId" placeholder="Enter manuscript ID">
+                </div>
+                <div class="form-group">
+                    <label>Manuscript Title:</label>
+                    <input type="text" id="manuscriptTitle" placeholder="Enter manuscript title">
+                </div>
+                <div class="form-group">
+                    <label>Abstract:</label>
+                    <textarea id="manuscriptAbstract" rows="3" placeholder="Enter manuscript abstract"></textarea>
+                </div>
+                <button class="btn" onclick="performTriage()">Manuscript Triage</button>
+                <button class="btn btn-secondary" onclick="getDecisionSupport()">Decision Support</button>
+            </div>
+        </div>
+
+        <!-- Active Agents List -->
+        <div class="card">
+            <h3><span class="icon">👥</span>Active Agents</h3>
+            <div class="agent-list" id="agentsList">
+                <p>Loading agents...</p>
+            </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="card">
+            <h3><span class="icon">📋</span>Activity Log</h3>
+            <div class="log-container" id="activityLog">
+                <div class="log-entry">System initialized - Autonomous Agents Framework ready</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Results -->
+    <div id="resultsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Results</h2>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let agents = [];
+        let systemStats = {};
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshStats();
+            listAgents();
+            
+            // Refresh data every 30 seconds
+            setInterval(() => {
+                refreshStats();
+                listAgents();
+            }, 30000);
+        });
+
+        // Utility functions
+        function logActivity(message) {
+            const logContainer = document.getElementById('activityLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logContainer.insertBefore(logEntry, logContainer.firstChild);
+            
+            // Keep only last 50 entries
+            while (logContainer.children.length > 50) {
+                logContainer.removeChild(logContainer.lastChild);
+            }
+        }
+
+        function showAlert(message, type = 'success') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.dashboard'));
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        function showModal(title, content) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalContent').innerHTML = content;
+            document.getElementById('resultsModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('resultsModal').style.display = 'none';
+        }
+
+        // API functions
+        async function apiCall(endpoint, method = 'GET', data = null) {
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+                
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+                
+                const response = await fetch(`/api${endpoint}`, options);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'API call failed');
+                }
+                
+                return result;
+            } catch (error) {
+                console.error('API call error:', error);
+                showAlert(error.message, 'error');
+                throw error;
+            }
+        }
+
+        // System functions
+        async function refreshStats() {
+            try {
+                const stats = await apiCall('/system/stats');
+                systemStats = stats.system_stats;
+                
+                document.getElementById('totalAgents').textContent = systemStats.agents.total;
+                document.getElementById('activeAgents').textContent = systemStats.agents.active;
+                document.getElementById('totalMessages').textContent = systemStats.messages.total;
+                
+                logActivity('System stats refreshed');
+            } catch (error) {
+                logActivity('Failed to refresh system stats');
+            }
+        }
+
+        async function listAgents() {
+            try {
+                const result = await apiCall('/agents');
+                agents = result.agents;
+                
+                const agentsList = document.getElementById('agentsList');
+                if (agents.length === 0) {
+                    agentsList.innerHTML = '<p>No agents found. Create your first agent!</p>';
+                } else {
+                    agentsList.innerHTML = agents.map(agent => `
+                        <div class="agent-item">
+                            <div>
+                                <strong>${agent.name}</strong><br>
+                                <small>${agent.agent_type} - ${agent.capabilities.join(', ')}</small>
+                            </div>
+                            <div>
+                                <span class="agent-status status-${agent.status}">${agent.status}</span>
+                                <button class="btn btn-danger" onclick="deleteAgent('${agent.id}')" style="margin-left: 10px; padding: 5px 10px; font-size: 0.8rem;">Delete</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                document.getElementById('agentsList').innerHTML = '<p>Failed to load agents</p>';
+            }
+        }
+
+        async function createAgent() {
+            const agentType = document.getElementById('agentType').value;
+            const agentName = document.getElementById('agentName').value || `${agentType}_agent_${Date.now()}`;
+            
+            try {
+                const result = await apiCall('/agents', 'POST', {
+                    agent_type: agentType,
+                    name: agentName
+                });
+                
+                showAlert(`Agent "${agentName}" created successfully!`);
+                logActivity(`Created agent: ${agentName} (${agentType})`);
+                
+                // Clear form
+                document.getElementById('agentName').value = '';
+                
+                // Refresh lists
+                refreshStats();
+                listAgents();
+            } catch (error) {
+                logActivity(`Failed to create agent: ${agentName}`);
+            }
+        }
+
+        async function deleteAgent(agentId) {
+            if (!confirm('Are you sure you want to delete this agent?')) {
+                return;
+            }
+            
+            try {
+                await apiCall(`/agents/${agentId}`, 'DELETE');
+                showAlert('Agent deleted successfully!');
+                logActivity(`Deleted agent: ${agentId}`);
+                
+                refreshStats();
+                listAgents();
+            } catch (error) {
+                logActivity(`Failed to delete agent: ${agentId}`);
+            }
+        }
+
+        // Research functions
+        async function performLiteratureSearch() {
+            const query = document.getElementById('searchQuery').value;
+            const domain = document.getElementById('searchDomain').value;
+            
+            if (!query.trim()) {
+                showAlert('Please enter a search query', 'error');
+                return;
+            }
+            
+            try {
+                logActivity(`Starting literature search: "${query}" in ${domain}`);
+                
+                const result = await apiCall('/research/search', 'POST', {
+                    query: query,
+                    domain: domain,
+                    limit: 10
+                });
+                
+                showAlert('Literature search initiated! Check messages for results.');
+                logActivity(`Literature search initiated - Message ID: ${result.message_id}`);
+                
+                // Poll for results (simplified - in production would use websockets)
+                setTimeout(() => checkMessageResults(result.message_id), 3000);
+                
+            } catch (error) {
+                logActivity(`Literature search failed: ${error.message}`);
+            }
+        }
+
+        async function performTrendAnalysis() {
+            const domain = document.getElementById('searchDomain').value;
+            
+            try {
+                logActivity(`Starting trend analysis for ${domain}`);
+                
+                const result = await apiCall('/research/trends', 'POST', {
+                    domain: domain,
+                    time_range: 5
+                });
+                
+                showAlert('Trend analysis initiated! Check messages for results.');
+                logActivity(`Trend analysis initiated - Message ID: ${result.message_id}`);
+                
+                setTimeout(() => checkMessageResults(result.message_id), 3000);
+                
+            } catch (error) {
+                logActivity(`Trend analysis failed: ${error.message}`);
+            }
+        }
+
+        // Editorial functions
+        async function performTriage() {
+            const manuscriptId = document.getElementById('manuscriptId').value;
+            const title = document.getElementById('manuscriptTitle').value;
+            const abstract = document.getElementById('manuscriptAbstract').value;
+            
+            if (!manuscriptId.trim() || !title.trim()) {
+                showAlert('Please enter manuscript ID and title', 'error');
+                return;
+            }
+            
+            try {
+                logActivity(`Starting manuscript triage: ${manuscriptId}`);
+                
+                const result = await apiCall('/editorial/triage', 'POST', {
+                    manuscript_id: manuscriptId,
+                    manuscript_data: {
+                        title: title,
+                        abstract: abstract,
+                        keywords: []
+                    }
+                });
+                
+                showAlert('Manuscript triage initiated! Check messages for results.');
+                logActivity(`Manuscript triage initiated - Message ID: ${result.message_id}`);
+                
+                setTimeout(() => checkMessageResults(result.message_id), 3000);
+                
+            } catch (error) {
+                logActivity(`Manuscript triage failed: ${error.message}`);
+            }
+        }
+
+        async function getDecisionSupport() {
+            const manuscriptId = document.getElementById('manuscriptId').value;
+            const title = document.getElementById('manuscriptTitle').value;
+            const abstract = document.getElementById('manuscriptAbstract').value;
+            
+            if (!manuscriptId.trim()) {
+                showAlert('Please enter manuscript ID', 'error');
+                return;
+            }
+            
+            try {
+                logActivity(`Getting decision support for: ${manuscriptId}`);
+                
+                const result = await apiCall('/editorial/decision-support', 'POST', {
+                    manuscript_id: manuscriptId,
+                    manuscript_data: {
+                        title: title,
+                        abstract: abstract
+                    },
+                    reviews: [
+                        { score: 4, comments: "Good methodology and clear presentation" },
+                        { score: 3, comments: "Interesting work but needs minor revisions" }
+                    ]
+                });
+                
+                showAlert('Decision support analysis initiated! Check messages for results.');
+                logActivity(`Decision support initiated - Message ID: ${result.message_id}`);
+                
+                setTimeout(() => checkMessageResults(result.message_id), 3000);
+                
+            } catch (error) {
+                logActivity(`Decision support failed: ${error.message}`);
+            }
+        }
+
+        // Message handling
+        async function checkMessageResults(messageId) {
+            try {
+                const message = await apiCall(`/messages/${messageId}`);
+                
+                if (message.message.status === 'completed') {
+                    const content = message.message.content;
+                    displayResults(content);
+                } else {
+                    // Still processing, check again later
+                    setTimeout(() => checkMessageResults(messageId), 2000);
+                }
+            } catch (error) {
+                logActivity(`Failed to check message results: ${messageId}`);
+            }
+        }
+
+        function displayResults(content) {
+            let html = '<div class="research-results">';
+            
+            if (content.papers) {
+                html += '<h3>Literature Search Results</h3>';
+                content.papers.forEach(paper => {
+                    html += `
+                        <div class="paper-item">
+                            <div class="paper-title">${paper.title}</div>
+                            <div class="paper-authors">${paper.authors.join(', ')} (${paper.year})</div>
+                            <div class="paper-abstract">${paper.abstract.substring(0, 200)}...</div>
+                        </div>
+                    `;
+                });
+            } else if (content.trends) {
+                html += '<h3>Trend Analysis Results</h3>';
+                content.trends.forEach(trend => {
+                    html += `
+                        <div class="paper-item">
+                            <div class="paper-title">${trend.topic}</div>
+                            <div class="paper-authors">Growth Rate: ${(trend.growth_rate * 100).toFixed(1)}% | Papers: ${trend.paper_count}</div>
+                            <div class="paper-abstract">Keywords: ${trend.key_keywords.join(', ')}</div>
+                        </div>
+                    `;
+                });
+            } else if (content.triage_decision) {
+                html += '<h3>Manuscript Triage Results</h3>';
+                html += `
+                    <div class="paper-item">
+                        <div class="paper-title">Decision: ${content.triage_decision}</div>
+                        <div class="paper-authors">Quality Score: ${content.quality_score.toFixed(2)} | Priority: ${content.priority}</div>
+                        <div class="paper-abstract">Suggested Track: ${content.suggested_track}</div>
+                    </div>
+                `;
+            } else {
+                html += '<pre>' + JSON.stringify(content, null, 2) + '</pre>';
+            }
+            
+            html += '</div>';
+            
+            showModal('Agent Results', html);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('resultsModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
+

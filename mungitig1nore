@@ -1,0 +1,125 @@
+# SKZ Agents Framework - Comprehensive .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+auto_commit.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node.js (for React components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn/
+.pnp.*
+
+# React build
+build/
+dist/
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Models and large files
+*.pkl
+*.model
+*.h5
+*.onnx
+models/
+vector_db/
+uploads/
+
+# OJS specific
+files/
+cache/
+config.inc.php
+!config.TEMPLATE.inc.php
+
+# Docker
+.dockerignore
+
+# Sensitive data
+*.key
+*.pem
+*.crt
+api_keys.txt
+secrets.json
+
+# Test results
+test-results/
+coverage.xml
+.coverage.*
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+

@@ -1,0 +1,55 @@
+graph TD
+    subgraph "Submission Assistant Agent - Manuscript Processing"
+        A2[Receive Manuscript Submission] --> B2[Initial Format Validation]
+        B2 --> C2{Format Compliant?}
+        C2 -->|No| D2[Send Format Correction Request]
+        C2 -->|Yes| E2[INCI Name Validation]
+        
+        E2 --> F2[Safety Data Completeness Check]
+        F2 --> G2[Regulatory Compliance Verification]
+        G2 --> H2[Statistical Analysis Review]
+        H2 --> I2[Literature Citation Validation]
+        I2 --> J2[Quality Score Calculation]
+        
+        J2 --> K2{Quality Score Assessment}
+        K2 -->|Score ≥ 90%| L2[Fast-Track Recommendation]
+        K2 -->|Score 80-89%| M2[Standard Processing]
+        K2 -->|Score 60-79%| N2[Minor Revision Required]
+        K2 -->|Score < 60%| O2[Major Revision Required]
+        
+        L2 --> P2[Generate Enhancement Suggestions]
+        M2 --> P2
+        N2 --> Q2[Detailed Revision Guidelines]
+        O2 --> R2[Comprehensive Improvement Plan]
+        
+        P2 --> S2[Send to Editorial Orchestration]
+        Q2 --> T2[Send Revision Request to Author]
+        R2 --> T2
+        
+        T2 --> U2[Monitor Revision Progress]
+        U2 --> V2{Revision Received?}
+        V2 -->|Yes| W2[Re-evaluate Quality]
+        V2 -->|Timeout| X2[Follow-up Communication]
+        
+        W2 --> Y2{Improved Quality?}
+        Y2 -->|Yes| S2
+        Y2 -->|No| Z2[Additional Guidance Required]
+        
+        D2 --> AA2[Author Communication]
+        X2 --> AA2
+        Z2 --> AA2
+        AA2 --> BB2[Update Submission Status]
+        
+        S2 --> CC2[Performance Tracking]
+        BB2 --> CC2
+        CC2 --> DD2[End Processing Cycle]
+    end
+    
+    style A2 fill:#e8f5e8
+    style DD2 fill:#f3e5f5
+    style K2 fill:#fff3e0
+    style L2 fill:#e8f5e8
+    style M2 fill:#fff9c4
+    style N2 fill:#ffecb3
+    style O2 fill:#ffcdd2
+

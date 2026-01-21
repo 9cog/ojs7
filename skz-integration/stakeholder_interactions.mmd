@@ -1,0 +1,124 @@
+graph TB
+    %% Stakeholder Interaction Patterns and Communication Flows
+    
+    %% Core Stakeholders
+    AU[Authors]
+    ED[Editors]
+    RE[Reviewers]
+    JM[Journal Managers]
+    
+    %% Communication Channels
+    subgraph "Communication Channels"
+        EMAIL[Email Systems]
+        SMS[Submission Management Systems]
+        NTF[Notification Systems]
+        COL[Collaboration Platforms]
+        SOC[Social Media & Networks]
+    end
+    
+    %% Autonomous Agent Layer
+    subgraph "Autonomous Agent Layer"
+        CA[Communication Agent]
+        NA[Notification Agent]
+        PA[Personalization Agent]
+        TA[Translation Agent]
+        SA[Sentiment Analysis Agent]
+    end
+    
+    %% Primary Interactions
+    AU -->|Submit Manuscript| ED
+    ED -->|Assign Review| RE
+    RE -->|Submit Review| ED
+    ED -->|Make Decision| AU
+    AU -->|Submit Revision| ED
+    ED -->|Report Status| JM
+    JM -->|Set Policies| ED
+    
+    %% Communication Flows
+    AU -.->|Status Updates| EMAIL
+    ED -.->|Review Invitations| EMAIL
+    RE -.->|Review Submissions| SMS
+    JM -.->|Performance Reports| NTF
+    
+    %% Agent Interventions
+    CA -.->|Optimize| EMAIL
+    NA -.->|Enhance| NTF
+    PA -.->|Personalize| SMS
+    TA -.->|Translate| COL
+    SA -.->|Analyze| SOC
+    
+    %% Decision Points
+    subgraph "Critical Decision Points"
+        DP1[Initial Triage]
+        DP2[Reviewer Assignment]
+        DP3[Editorial Decision]
+        DP4[Final Acceptance]
+    end
+    
+    ED --> DP1
+    ED --> DP2
+    ED --> DP3
+    ED --> DP4
+    
+    %% Agent Support for Decisions
+    subgraph "Decision Support Agents"
+        DSA1[Triage Support Agent]
+        DSA2[Matching Support Agent]
+        DSA3[Decision Support Agent]
+        DSA4[Publication Support Agent]
+    end
+    
+    DSA1 -.-> DP1
+    DSA2 -.-> DP2
+    DSA3 -.-> DP3
+    DSA4 -.-> DP4
+    
+    %% Information Flows
+    subgraph "Information Flows"
+        IF1[Manuscript Data]
+        IF2[Review Data]
+        IF3[Decision Data]
+        IF4[Performance Data]
+    end
+    
+    AU --> IF1
+    RE --> IF2
+    ED --> IF3
+    JM --> IF4
+    
+    %% Knowledge Base
+    subgraph "Knowledge Management"
+        KB[Knowledge Base]
+        EX[Expertise Models]
+        HI[Historical Data]
+        BE[Best Practices]
+    end
+    
+    IF1 --> KB
+    IF2 --> EX
+    IF3 --> HI
+    IF4 --> BE
+    
+    %% Feedback Loops
+    KB -.->|Inform| DSA1
+    EX -.->|Guide| DSA2
+    HI -.->|Support| DSA3
+    BE -.->|Optimize| DSA4
+    
+    %% Styling
+    classDef stakeholder fill:#e3f2fd,stroke:#0277bd,stroke-width:3px
+    classDef channel fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef agent fill:#ffebee,stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5
+    classDef decision fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef support fill:#fff3e0,stroke:#f57c00,stroke-width:2px,stroke-dasharray: 3 3
+    classDef info fill:#fce4ec,stroke:#ad1457,stroke-width:2px
+    classDef knowledge fill:#f1f8e9,stroke:#558b2f,stroke-width:2px
+    
+    class AU,ED,RE,JM stakeholder
+    class EMAIL,SMS,NTF,COL,SOC channel
+    class CA,NA,PA,TA,SA agent
+    class DP1,DP2,DP3,DP4 decision
+    class DSA1,DSA2,DSA3,DSA4 support
+    class IF1,IF2,IF3,IF4 info
+    class KB,EX,HI,BE knowledge
+

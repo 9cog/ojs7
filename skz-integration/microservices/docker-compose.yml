@@ -1,0 +1,129 @@
+version: '3.8'
+
+services:
+  # API Gateway - Central entry point for all services
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "5000:5000"
+    environment:
+      - RESEARCH_DISCOVERY_URL=http://research-discovery:5001
+      - SUBMISSION_ASSISTANT_URL=http://submission-assistant:5002
+      - EDITORIAL_ORCHESTRATION_URL=http://editorial-orchestration:5003
+      - REVIEW_COORDINATION_URL=http://review-coordination:5004
+      - CONTENT_QUALITY_URL=http://content-quality:5005
+      - PUBLISHING_PRODUCTION_URL=http://publishing-production:5006
+      - ANALYTICS_MONITORING_URL=http://analytics-monitoring:5007
+    depends_on:
+      - research-discovery
+      - submission-assistant
+      - content-quality
+      - analytics-monitoring
+    networks:
+      - agents-network
+    restart: unless-stopped
+
+  # Research Discovery Agent - Literature search and analysis
+  research-discovery:
+    build: ./research-discovery
+    ports:
+      - "5001:5001"
+    environment:
+      - SERVICE_NAME=research-discovery
+      - PORT=5001
+    networks:
+      - agents-network
+    restart: unless-stopped
+
+  # Submission Assistant Agent - Manuscript submission support
+  submission-assistant:
+    build: ./submission-assistant
+    ports:
+      - "5002:5002"
+    environment:
+      - SERVICE_NAME=submission-assistant
+      - PORT=5002
+    networks:
+      - agents-network
+    restart: unless-stopped
+
+  # Editorial Orchestration Agent - Workflow management
+  editorial-orchestration:
+    build: ./editorial-orchestration
+    ports:
+      - "5003:5003"
+    environment:
+      - SERVICE_NAME=editorial-orchestration
+      - PORT=5003
+    networks:
+      - agents-network
+    restart: unless-stopped
+
+  # Review Coordination Agent - Peer review coordination
+  review-coordination:
+    build: ./review-coordination
+    ports:
+      - "5004:5004"
+    environment:
+      - SERVICE_NAME=review-coordination
+      - PORT=5004
+    networks:
+      - agents-network
+    restart: unless-stopped
+
+  # Content Quality Agent - Quality assessment
+  content-quality:
+    build: ./content-quality
+    ports:
+      - "5005:5005"
+    environment:
+      - SERVICE_NAME=content-quality
+      - PORT=5005
+    networks:
+      - agents-network
+    restart: unless-stopped
+
+  # Publishing Production Agent - Publication management
+  publishing-production:
+    build: ./publishing-production
+    ports:
+      - "5006:5006"
+    environment:
+      - SERVICE_NAME=publishing-production
+      - PORT=5006
+    networks:
+      - agents-network
+    restart: unless-stopped
+
+  # Analytics Monitoring Agent - System monitoring
+  analytics-monitoring:
+    build: ./analytics-monitoring
+    ports:
+      - "5007:5007"
+    environment:
+      - SERVICE_NAME=analytics-monitoring
+      - PORT=5007
+    networks:
+      - agents-network
+    restart: unless-stopped
+
+  # Redis for caching and inter-service communication
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - agents-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+
+networks:
+  agents-network:
+    driver: bridge
+    name: autonomous-agents-network
+
+volumes:
+  redis-data:
+    driver: local

@@ -1,0 +1,88 @@
+graph TD
+    %% OJS Complete Workflow with Autonomous Agents
+    
+    %% Author Journey
+    A1[Author: Research & Writing] --> A2[Author: Pre-Submission Prep]
+    A2 --> A3[Author: Submission Process]
+    A3 --> A4[Author: Review & Revision]
+    A4 --> A5[Author: Publication & Post-Pub]
+    
+    %% Autonomous Agents for Authors
+    RA[Research Agent] -.-> A1
+    WA[Writing Agent] -.-> A1
+    JMA[Journal Matching Agent] -.-> A2
+    FA[Formatting Agent] -.-> A2
+    SA[Submission Agent] -.-> A3
+    RAA[Review Analysis Agent] -.-> A4
+    PA[Promotion Agent] -.-> A5
+    
+    %% Editorial Journey
+    E1[Editor: Manuscript Triage] --> E2[Editor: Reviewer Assignment]
+    E2 --> E3[Editor: Review Management]
+    E3 --> E4[Editor: Decision Making]
+    E4 --> E5[Editor: Final Processing]
+    
+    %% Autonomous Agents for Editors
+    TA[Triage Agent] -.-> E1
+    RMA[Reviewer Matching Agent] -.-> E2
+    MA[Monitoring Agent] -.-> E3
+    DSA[Decision Support Agent] -.-> E4
+    HA[Handoff Agent] -.-> E5
+    
+    %% Reviewer Journey
+    R1[Reviewer: Invitation Decision] --> R2[Reviewer: Review Execution]
+    R2 --> R3[Reviewer: Submission & Follow-up]
+    
+    %% Autonomous Agents for Reviewers
+    IAA[Invitation Assessment Agent] -.-> R1
+    AA[Analysis Agent] -.-> R2
+    QA[Quality Agent] -.-> R2
+    SUA[Submission Agent] -.-> R3
+    
+    %% Journal Manager Journey
+    J1[Manager: Strategic Planning] --> J2[Manager: Quality Assurance]
+    J2 --> J3[Manager: Performance Optimization]
+    
+    %% Autonomous Agents for Managers
+    ANA[Analytics Agent] -.-> J1
+    QMA[Quality Monitoring Agent] -.-> J2
+    POA[Process Optimization Agent] -.-> J3
+    
+    %% Workflow Stages
+    WS1[Submission Stage] --> WS2[Internal Review Stage]
+    WS2 --> WS3[External Review Stage]
+    WS3 --> WS4[Editorial Stage]
+    WS4 --> WS5[Production Stage]
+    
+    %% Connections between journeys and stages
+    A3 --> WS1
+    E1 --> WS1
+    E2 --> WS2
+    E2 --> WS3
+    R1 --> WS3
+    E4 --> WS4
+    E5 --> WS5
+    
+    %% Agent Coordination
+    AC[Agent Coordinator] -.-> RA
+    AC -.-> TA
+    AC -.-> RMA
+    AC -.-> ANA
+    
+    %% Styling
+    classDef authorClass fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef editorClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef reviewerClass fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef managerClass fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef agentClass fill:#ffebee,stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5
+    classDef stageClass fill:#f1f8e9,stroke:#33691e,stroke-width:3px
+    classDef coordinatorClass fill:#fce4ec,stroke:#880e4f,stroke-width:3px
+    
+    class A1,A2,A3,A4,A5 authorClass
+    class E1,E2,E3,E4,E5 editorClass
+    class R1,R2,R3 reviewerClass
+    class J1,J2,J3 managerClass
+    class RA,WA,JMA,FA,SA,RAA,PA,TA,RMA,MA,DSA,HA,IAA,AA,QA,SUA,ANA,QMA,POA agentClass
+    class WS1,WS2,WS3,WS4,WS5 stageClass
+    class AC coordinatorClass
+

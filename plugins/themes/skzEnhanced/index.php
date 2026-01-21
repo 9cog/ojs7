@@ -1,0 +1,1 @@
+<?php return 'plugins.themes.skzEnhanced'; ?>

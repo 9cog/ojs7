@@ -1,0 +1,200 @@
+graph TB
+    %% Agent Communication Patterns and Message Flows
+    
+    %% Message Broker Infrastructure
+    subgraph "Message-Oriented Middleware"
+        MB[Message Broker]
+        MQ1[Command Queue]
+        MQ2[Event Queue]
+        MQ3[Response Queue]
+        TE[Topic Exchange]
+        DE[Direct Exchange]
+        DLQ[Dead Letter Queue]
+    end
+    
+    %% Core Agents
+    subgraph "Content Processing Agents"
+        RDA[Research Discovery Agent]
+        MEA[Manuscript Enhancement Agent]
+        CQA[Content Quality Agent]
+    end
+    
+    subgraph "Workflow Coordination Agents"
+        EOA[Editorial Orchestration Agent]
+        RCA[Reviewer Coordination Agent]
+        WO[Workflow Orchestrator]
+    end
+    
+    subgraph "Communication Agents"
+        SCA[Stakeholder Communication Agent]
+        NA[Notification Agent]
+    end
+    
+    subgraph "Strategic Agents"
+        ARA[Analytics & Reporting Agent]
+        SPA[Strategic Planning Agent]
+    end
+    
+    %% Service Registry and Discovery
+    subgraph "Service Infrastructure"
+        SR[Service Registry]
+        LB[Load Balancer]
+        HM[Health Monitor]
+        CR[Conflict Resolver]
+    end
+    
+    %% Communication Patterns
+    
+    %% 1. Request-Response Pattern
+    RDA -->|Query Request| DE
+    DE -->|Route| MEA
+    MEA -->|Response| DE
+    DE -->|Route Back| RDA
+    
+    %% 2. Publish-Subscribe Pattern
+    EOA -->|Decision Event| TE
+    TE -->|Broadcast| SCA
+    TE -->|Broadcast| ARA
+    TE -->|Broadcast| NA
+    
+    %% 3. Command Pattern
+    WO -->|Commands| MQ1
+    MQ1 -->|Distribute| RDA
+    MQ1 -->|Distribute| MEA
+    MQ1 -->|Distribute| CQA
+    
+    %% 4. Event Streaming
+    RCA -->|Review Events| MQ2
+    EOA -->|Editorial Events| MQ2
+    CQA -->|Quality Events| MQ2
+    MQ2 -->|Stream| ARA
+    
+    %% Service Discovery
+    RDA -.->|Register| SR
+    MEA -.->|Register| SR
+    EOA -.->|Register| SR
+    RCA -.->|Register| SR
+    
+    SR -.->|Discover| LB
+    LB -.->|Route| RDA
+    LB -.->|Route| MEA
+    
+    %% Health Monitoring
+    HM -.->|Monitor| RDA
+    HM -.->|Monitor| MEA
+    HM -.->|Monitor| EOA
+    HM -.->|Monitor| RCA
+    
+    %% Conflict Resolution
+    CR -.->|Resolve| EOA
+    CR -.->|Resolve| RCA
+    CR -.->|Mediate| WO
+    
+    %% Message Types
+    subgraph "Message Types"
+        CMD[Command Messages]
+        QRY[Query Messages]
+        EVT[Event Messages]
+        COORD[Coordination Messages]
+        RESP[Response Messages]
+    end
+    
+    %% Message Flow Examples
+    CMD -->|Process| MQ1
+    QRY -->|Route| DE
+    EVT -->|Broadcast| TE
+    COORD -->|Coordinate| CR
+    RESP -->|Return| MQ3
+    
+    %% Error Handling
+    MQ1 -.->|Failed Messages| DLQ
+    MQ2 -.->|Failed Messages| DLQ
+    MQ3 -.->|Failed Messages| DLQ
+    
+    %% Workflow Orchestration Example
+    subgraph "Workflow Example: Manuscript Processing"
+        W1[1. Submission Received]
+        W2[2. Format Validation]
+        W3[3. Quality Assessment]
+        W4[4. Editor Assignment]
+        W5[5. Review Coordination]
+        W6[6. Decision Making]
+    end
+    
+    W1 --> W2
+    W2 --> W3
+    W3 --> W4
+    W4 --> W5
+    W5 --> W6
+    
+    %% Agent Assignments to Workflow
+    W1 -.-> SCA
+    W2 -.-> MEA
+    W3 -.-> CQA
+    W4 -.-> EOA
+    W5 -.-> RCA
+    W6 -.-> EOA
+    
+    %% Conflict Resolution Example
+    subgraph "Conflict Resolution Flow"
+        CF1[Conflict Detection]
+        CF2[Stakeholder Identification]
+        CF3[Negotiation Process]
+        CF4[Resolution Implementation]
+        CF5[Outcome Monitoring]
+    end
+    
+    CF1 --> CF2
+    CF2 --> CF3
+    CF3 --> CF4
+    CF4 --> CF5
+    
+    CR -.-> CF1
+    CR -.-> CF3
+    CR -.-> CF4
+    
+    %% Security Layer
+    subgraph "Security & Authentication"
+        AUTH[Authentication Service]
+        AUTHZ[Authorization Service]
+        ENC[Message Encryption]
+        SIG[Digital Signatures]
+    end
+    
+    AUTH -.->|Authenticate| MB
+    AUTHZ -.->|Authorize| MB
+    ENC -.->|Encrypt| MB
+    SIG -.->|Sign| MB
+    
+    %% Monitoring and Observability
+    subgraph "Monitoring & Observability"
+        METRICS[Metrics Collector]
+        TRACE[Distributed Tracing]
+        LOGS[Log Aggregator]
+        ALERT[Alerting System]
+    end
+    
+    METRICS -.->|Collect| MB
+    TRACE -.->|Trace| MB
+    LOGS -.->|Aggregate| MB
+    ALERT -.->|Monitor| MB
+    
+    %% Styling
+    classDef middleware fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef agent fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef infrastructure fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef message fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef workflow fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef conflict fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef security fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px
+    classDef monitoring fill:#f1f8e9,stroke:#558b2f,stroke-width:2px
+    
+    class MB,MQ1,MQ2,MQ3,TE,DE,DLQ middleware
+    class RDA,MEA,CQA,EOA,RCA,WO,SCA,NA,ARA,SPA agent
+    class SR,LB,HM,CR infrastructure
+    class CMD,QRY,EVT,COORD,RESP message
+    class W1,W2,W3,W4,W5,W6 workflow
+    class CF1,CF2,CF3,CF4,CF5 conflict
+    class AUTH,AUTHZ,ENC,SIG security
+    class METRICS,TRACE,LOGS,ALERT monitoring
+

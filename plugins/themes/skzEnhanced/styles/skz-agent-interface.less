@@ -1,0 +1,319 @@
+/**
+ * SKZ Agent Interface Styles
+ * Main styles for agent interface components
+ */
+
+/* CSS Variables for theming */
+:root {
+	--skz-agent-primary: #1e40af;
+	--skz-agent-secondary: #6b7280;
+	--skz-agent-success: #059669;
+	--skz-agent-warning: #d97706;
+	--skz-agent-error: #dc2626;
+	--skz-agent-background: #f8fafc;
+	--skz-agent-border: #e5e7eb;
+	--skz-agent-text: #374151;
+	--skz-agent-border-radius: 6px;
+	--skz-agent-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+	--skz-agent-transition: all 0.2s ease-in-out;
+}
+
+/* Agent Status Bar */
+.skz-agent-status-bar {
+	background: var(--skz-agent-background);
+	border-bottom: 1px solid var(--skz-agent-border);
+	padding: 8px 16px;
+	font-size: 14px;
+	color: var(--skz-agent-text);
+	transition: var(--skz-agent-transition);
+	position: relative;
+	z-index: 1000;
+}
+
+.skz-status-container {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	max-width: 1200px;
+	margin: 0 auto;
+	gap: 16px;
+}
+
+.skz-status-summary {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.skz-status-indicator {
+	display: inline-flex;
+	align-items: center;
+	
+	&.active {
+		color: var(--skz-agent-success);
+	}
+	
+	&.warning {
+		color: var(--skz-agent-warning);
+	}
+	
+	&.error {
+		color: var(--skz-agent-error);
+	}
+	
+	i {
+		font-size: 8px;
+		animation: pulse 2s infinite;
+	}
+}
+
+.skz-status-text {
+	font-weight: 500;
+	margin-right: 8px;
+}
+
+.skz-status-count {
+	color: var(--skz-agent-secondary);
+	font-size: 12px;
+}
+
+.skz-agent-indicators {
+	display: flex;
+	gap: 6px;
+}
+
+.skz-agent-indicator {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: white;
+	border: 1px solid var(--skz-agent-border);
+	cursor: pointer;
+	transition: var(--skz-agent-transition);
+	
+	&:hover {
+		transform: scale(1.1);
+		box-shadow: var(--skz-agent-shadow);
+	}
+}
+
+.skz-agent-icon {
+	font-size: 12px;
+}
+
+.skz-agent-status {
+	position: absolute;
+	bottom: -2px;
+	right: -2px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	border: 1px solid white;
+	
+	&.active {
+		background: var(--skz-agent-success);
+	}
+	
+	&.warning {
+		background: var(--skz-agent-warning);
+	}
+	
+	&.error {
+		background: var(--skz-agent-error);
+	}
+	
+	&.inactive {
+		background: var(--skz-agent-secondary);
+	}
+}
+
+.skz-quick-stats {
+	display: flex;
+	gap: 12px;
+}
+
+.skz-stat {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 12px;
+	color: var(--skz-agent-secondary);
+	
+	i {
+		font-size: 10px;
+	}
+}
+
+.skz-controls {
+	display: flex;
+	gap: 8px;
+}
+
+.skz-dashboard-btn {
+	background: var(--skz-agent-primary);
+	color: white;
+	border: none;
+	padding: 6px 12px;
+	border-radius: var(--skz-agent-border-radius);
+	font-size: 12px;
+	cursor: pointer;
+	transition: var(--skz-agent-transition);
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	
+	&:hover {
+		background: darken(var(--skz-agent-primary), 10%);
+		transform: translateY(-1px);
+	}
+	
+	i {
+		font-size: 10px;
+	}
+}
+
+.skz-status-unavailable {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--skz-agent-warning);
+	font-size: 12px;
+}
+
+/* Status toggle for mobile */
+.skz-status-toggle {
+	display: none;
+	position: fixed;
+	top: 60px;
+	right: 16px;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: var(--skz-agent-primary);
+	color: white;
+	border: none;
+	cursor: pointer;
+	box-shadow: var(--skz-agent-shadow);
+	z-index: 1001;
+	transition: var(--skz-agent-transition);
+	
+	&:hover {
+		transform: scale(1.1);
+	}
+	
+	&.collapsed {
+		background: var(--skz-agent-secondary);
+	}
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.skz-agent-status-bar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		transform: translateY(0);
+		transition: transform 0.3s ease;
+		
+		&.collapsed {
+			transform: translateY(-100%);
+		}
+	}
+	
+	.skz-status-toggle {
+		display: block;
+	}
+	
+	.skz-status-container {
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+	
+	.skz-agent-indicators {
+		order: 3;
+		flex-basis: 100%;
+		justify-content: center;
+		margin-top: 8px;
+	}
+	
+	.skz-quick-stats {
+		display: none;
+	}
+}
+
+@media (max-width: 480px) {
+	.skz-status-container {
+		padding: 0 8px;
+	}
+	
+	.skz-status-text {
+		display: none;
+	}
+	
+	.skz-dashboard-btn {
+		font-size: 11px;
+		padding: 4px 8px;
+	}
+}
+
+/* Animations */
+@keyframes pulse {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Hover effects */
+.skz-agent-indicator:hover::after {
+	content: attr(data-agent-name);
+	position: absolute;
+	bottom: -30px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: rgba(0, 0, 0, 0.8);
+	color: white;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 11px;
+	white-space: nowrap;
+	z-index: 1000;
+}
+
+/* Accessibility */
+.skz-agent-status-bar button:focus,
+.skz-agent-indicator:focus {
+	outline: 2px solid var(--skz-agent-primary);
+	outline-offset: 2px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--skz-agent-background: #1f2937;
+		--skz-agent-border: #374151;
+		--skz-agent-text: #f3f4f6;
+	}
+	
+	.skz-agent-indicator {
+		background: #374151;
+	}
+}

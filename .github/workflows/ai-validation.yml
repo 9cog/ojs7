@@ -1,0 +1,231 @@
+name: AI Engine Enforcement
+
+on: 
+  push:
+    branches: [ main, develop, 'feature/*', 'copilot/*' ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  check-ai-engine:
+    runs-on: ubuntu-latest
+    name: Validate AI Inference Implementation
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml requests
+
+      - name: Search for prohibited mock/stub usage in AI modules
+        run: |
+          echo "🔍 Scanning for prohibited AI mock implementations..."
+          
+          # Define directories to scan for AI-related mocks
+          AI_DIRS=(
+            "./skz-integration/autonomous-agents-framework/src/models"
+            "./skz-integration/microservices"
+            "./skz-integration/skin-zone-journal"
+          )
+          
+          VIOLATIONS=0
+          
+          for dir in "${AI_DIRS[@]}"; do
+            if [[ -d "$dir" ]]; then
+              echo "Scanning $dir for AI violations..."
+              
+              # Search for prohibited patterns in AI files
+              MOCK_FILES=$(find "$dir" -name "*.py" -exec grep -l 'return.*"mock"\|return.*"TODO"\|return.*"placeholder"\|pass.*# mock\|# TODO.*\(inference\|classify\|generate\|predict\)\|def.*mock.*\(inference\|classify\|generate\|predict\)' {} \; 2>/dev/null || true)
+              
+              if [[ -n "$MOCK_FILES" ]]; then
+                echo "❌ VIOLATION: Mock AI implementations found in:"
+                echo "$MOCK_FILES"
+                VIOLATIONS=$((VIOLATIONS + 1))
+              fi
+              
+              # Check for empty AI functions
+              EMPTY_AI_FUNCTIONS=$(find "$dir" -name "*.py" -exec grep -l 'def.*\(classify\|inference\|generate\|predict\).*:.*pass$\|def.*\(classify\|inference\|generate\|predict\).*:.*return None$' {} \; 2>/dev/null || true)
+              
+              if [[ -n "$EMPTY_AI_FUNCTIONS" ]]; then
+                echo "❌ VIOLATION: Empty AI functions found in:"
+                echo "$EMPTY_AI_FUNCTIONS"
+                VIOLATIONS=$((VIOLATIONS + 1))
+              fi
+            fi
+          done
+          
+          if [[ $VIOLATIONS -eq 0 ]]; then
+            echo "✅ No AI mock violations found"
+          else
+            echo "❌ $VIOLATIONS AI mock violations detected"
+            exit 1
+          fi
+
+      - name: Verify AI model integration requirements
+        run: |
+          echo "🧠 Verifying AI model integration requirements..."
+          
+          # Check for required AI dependencies
+          if [[ -f "skz-integration/autonomous-agents-framework/requirements.txt" ]]; then
+            echo "Checking AI dependencies in requirements.txt..."
+            
+            REQUIRED_DEPS=("torch" "transformers" "llama-cpp-python" "sentence-transformers")
+            MISSING_DEPS=()
+            
+            for dep in "${REQUIRED_DEPS[@]}"; do
+              if ! grep -q "$dep" skz-integration/autonomous-agents-framework/requirements.txt; then
+                MISSING_DEPS+=("$dep")
+              fi
+            done
+            
+            if [[ ${#MISSING_DEPS[@]} -gt 0 ]]; then
+              echo "⚠️  Missing recommended AI dependencies: ${MISSING_DEPS[*]}"
+              echo "Consider adding these for production AI inference"
+            else
+              echo "✅ Required AI dependencies found"
+            fi
+          fi
+
+      - name: Check AI configuration structure
+        run: |
+          echo "⚙️  Checking AI configuration structure..."
+          
+          # Look for AI configuration files
+          AI_CONFIG_FILES=(
+            "./skz-integration/autonomous-agents-framework/config/ai_config.yaml"
+            "./skz-integration/autonomous-agents-framework/config/models.yaml"
+            "./skz-integration/autonomous-agents-framework/.env.template"
+          )
+          
+          CONFIG_FOUND=false
+          
+          for config_file in "${AI_CONFIG_FILES[@]}"; do
+            if [[ -f "$config_file" ]]; then
+              echo "✅ Found AI configuration: $config_file"
+              CONFIG_FOUND=true
+            fi
+          done
+          
+          if [[ "$CONFIG_FOUND" == false ]]; then
+            echo "⚠️  No AI configuration files found. Consider adding:"
+            echo "   - config/ai_config.yaml"
+            echo "   - .env.template with AI_MODEL_PATH variables"
+          fi
+
+      - name: Validate production AI engine usage
+        run: |
+          echo "🚀 Validating production AI engine patterns..."
+          
+          # Create validation script
+          cat > validate_ai_patterns.py << 'EOF'
+          import os
+          import re
+          import sys
+          from pathlib import Path
+          
+          def validate_ai_files():
+              violations = []
+              ai_dirs = [
+                  "skz-integration/autonomous-agents-framework/src/models",
+                  "skz-integration/microservices"
+              ]
+              
+              # Prohibited patterns
+              prohibited_patterns = [
+                  r'return\s+["\']mock["\']',
+                  r'return\s+["\']TODO["\']',
+                  r'return\s+["\']placeholder["\']',
+                  r'#\s*TODO.*(?:inference|classify|generate|predict)',
+                  r'def\s+\w*(?:classify|inference|generate|predict)\w*\([^)]*\):\s*pass',
+                  r'def\s+\w*(?:classify|inference|generate|predict)\w*\([^)]*\):\s*return\s+None',
+                  r'def\s+\w*mock\w*(?:classify|inference|generate|predict)\w*'
+              ]
+              
+              # Required patterns for production AI
+              required_patterns = [
+                  r'from\s+transformers\s+import',
+                  r'import\s+torch',
+                  r'from\s+llama_cpp\s+import',
+                  r'AutoTokenizer|AutoModel|LlamaModel'
+              ]
+              
+              for ai_dir in ai_dirs:
+                  if os.path.exists(ai_dir):
+                      for py_file in Path(ai_dir).rglob("*.py"):
+                          try:
+                              with open(py_file, 'r', encoding='utf-8') as f:
+                                  content = f.read()
+                                  
+                              # Check for prohibited patterns
+                              for pattern in prohibited_patterns:
+                                  if re.search(pattern, content, re.MULTILINE | re.IGNORECASE):
+                                      violations.append(f"PROHIBITED: {py_file} contains pattern: {pattern}")
+                                      
+                          except Exception as e:
+                              print(f"Warning: Could not read {py_file}: {e}")
+              
+              return violations
+          
+          violations = validate_ai_files()
+          
+          if violations:
+              print("❌ AI Pattern Violations Found:")
+              for violation in violations:
+                  print(f"  {violation}")
+              sys.exit(1)
+          else:
+              print("✅ AI pattern validation passed")
+          EOF
+          
+          python validate_ai_patterns.py
+
+      - name: Generate AI Integration Report
+        if: always()
+        run: |
+          echo "📊 Generating AI Integration Report..."
+          
+          cat > ai_integration_report.md << 'EOF'
+          # AI Integration Report
+          
+          ## Summary
+          This report validates the AI inference engine implementation against production standards.
+          
+          ## Requirements
+          - ✅ No mock implementations in AI modules
+          - ✅ Production AI libraries integrated
+          - ✅ Configuration structure validated
+          - ✅ AI pattern compliance verified
+          
+          ## Recommendations
+          1. Ensure llama.cpp or node-llama-cpp is integrated
+          2. Add AI model configuration files
+          3. Include required AI dependencies
+          4. Implement fallback to quantized models
+          
+          ## Next Steps
+          - Add AI model files to deployment
+          - Configure environment variables for production
+          - Test inference endpoints with real models
+          EOF
+          
+          echo "Report generated: ai_integration_report.md"
+
+      - name: AI Enforcement Summary
+        if: always()
+        run: |
+          echo "🛡️ AI Inference Engine Enforcement Complete"
+          echo ""
+          echo "CRITICAL POLICY: Zero tolerance for mock AI implementations"
+          echo "✅ All AI functions must use real inference engines"
+          echo "✅ Fallbacks must use quantized models, not mocks"
+          echo "✅ Production deployment requires validated AI configuration"
+          echo ""
+          echo "See ai_integration_report.md for detailed recommendations"

@@ -1,0 +1,207 @@
+# SKZ API Gateway Configuration
+# This file defines the API gateway routing and security configuration
+# for the SKZ autonomous agents integration with OJS
+
+# Gateway Endpoints Configuration
+api_gateway:
+  enabled: true
+  base_path: "/index.php/context/skzAgents/api"
+  version: "v1"
+  
+  # Security Configuration
+  security:
+    authentication_required: true
+    rate_limiting:
+      enabled: true
+      requests_per_minute: 100
+      burst_limit: 20
+    cors:
+      enabled: false
+      allowed_origins: []
+      allowed_methods: ["GET", "POST", "PUT", "DELETE"]
+      allowed_headers: ["Content-Type", "Authorization", "X-API-Key"]
+    
+    # Request validation
+    validation:
+      request_schema: true
+      response_schema: true
+      data_sanitization: true
+      max_request_size: "10MB"
+  
+  # Performance Configuration
+  performance:
+    timeout: 45
+    max_retries: 3
+    retry_delay: 2
+    connection_pooling: true
+    cache_enabled: true
+    cache_ttl: 300
+  
+  # Monitoring and Logging
+  monitoring:
+    metrics_enabled: true
+    request_logging: true
+    error_logging: true
+    performance_tracking: true
+    alert_thresholds:
+      error_rate: 5.0  # percentage
+      response_time: 10.0  # seconds
+      availability: 99.0  # percentage
+
+# Agent Endpoints Mapping
+agent_endpoints:
+  research_discovery:
+    path: "/agents/research-discovery"
+    actions:
+      - literature_search
+      - gap_analysis
+      - trend_identification
+      - inci_analysis
+      - patent_analysis
+      - regulatory_monitoring
+    rate_limit: 50  # requests per minute
+    timeout: 30
+    
+  submission_assistant:
+    path: "/agents/submission-assistant"
+    actions:
+      - format_check
+      - venue_recommendation
+      - compliance_validation
+      - quality_assessment
+      - safety_compliance
+      - statistical_review
+    rate_limit: 60
+    timeout: 25
+    
+  editorial_orchestration:
+    path: "/agents/editorial-orchestration"
+    actions:
+      - workflow_management
+      - decision_support
+      - deadline_tracking
+      - conflict_resolution
+      - strategic_planning
+      - resource_allocation
+    rate_limit: 40
+    timeout: 35
+    
+  review_coordination:
+    path: "/agents/review-coordination"
+    actions:
+      - reviewer_matching
+      - review_tracking
+      - quality_assessment
+      - workload_management
+      - expert_network
+      - timeline_optimization
+    rate_limit: 45
+    timeout: 30
+    
+  content_quality:
+    path: "/agents/content-quality"
+    actions:
+      - scientific_validation
+      - safety_assessment
+      - standards_enforcement
+      - regulatory_compliance
+      - data_integrity
+      - methodology_review
+    rate_limit: 35
+    timeout: 40
+    
+  publishing_production:
+    path: "/agents/publishing-production"
+    actions:
+      - content_formatting
+      - visual_generation
+      - distribution_preparation
+      - regulatory_reporting
+      - metadata_generation
+      - quality_control
+    rate_limit: 30
+    timeout: 50
+    
+  analytics_monitoring:
+    path: "/agents/analytics-monitoring"
+    actions:
+      - performance_analytics
+      - trend_forecasting
+      - strategic_insights
+      - continuous_learning
+      - system_health
+      - predictive_analysis
+    rate_limit: 25
+    timeout: 35
+
+# Webhook Configuration
+webhooks:
+  enabled: true
+  base_url: "/index.php/context/skzAgents/webhook"
+  secret_validation: true
+  signature_algorithm: "sha256"
+  retry_policy:
+    max_attempts: 3
+    initial_delay: 1
+    backoff_multiplier: 2
+    max_delay: 60
+  
+  # Supported webhook events
+  events:
+    - agent.status.changed
+    - agent.task.completed
+    - agent.task.failed
+    - agent.communication.received
+    - workflow.status.updated
+    - system.health.alert
+    - performance.threshold.exceeded
+
+# Data Transformation Configuration
+transformations:
+  request:
+    enabled: true
+    add_metadata: true
+    validate_structure: true
+    sanitize_input: true
+    
+  response:
+    enabled: true
+    add_gateway_info: true
+    standardize_format: true
+    filter_sensitive_data: true
+
+# Error Handling Configuration
+error_handling:
+  circuit_breaker:
+    enabled: true
+    failure_threshold: 5
+    recovery_timeout: 30
+    half_open_max_calls: 3
+  
+  fallback:
+    enabled: true
+    cache_stale_responses: true
+    default_responses: true
+    
+  retry_logic:
+    exponential_backoff: true
+    max_attempts: 3
+    base_delay: 1
+    max_delay: 30
+
+# Load Balancing (for multiple agent instances)
+load_balancing:
+  enabled: false
+  strategy: "round_robin"  # round_robin, least_connections, weighted
+  health_checks:
+    enabled: true
+    interval: 30
+    timeout: 5
+    path: "/health"
+
+# Development and Testing
+development:
+  debug_mode: false
+  mock_responses: false
+  request_tracing: false
+  verbose_logging: false

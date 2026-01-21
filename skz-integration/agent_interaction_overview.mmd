@@ -1,0 +1,68 @@
+graph TB
+    subgraph "Skin Zone Journal - 7 Autonomous Agents Ecosystem"
+        subgraph "Discovery & Innovation Layer"
+            RDA[Research Discovery Agent<br/>🔍 Cosmetic Intelligence]
+            RDA --> |New Ingredients<br/>Trends & Opportunities| SAA
+        end
+        
+        subgraph "Submission & Quality Layer"
+            SAA[Submission Assistant Agent<br/>📝 Manuscript Intelligence]
+            CQA[Content Quality Agent<br/>✅ Scientific Intelligence]
+            SAA --> |Quality Assessment<br/>Enhancement Suggestions| EOA
+            CQA --> |Quality Validation<br/>Standards Enforcement| PPA
+        end
+        
+        subgraph "Editorial Coordination Layer"
+            EOA[Editorial Orchestration Agent<br/>🎯 Publication Intelligence]
+            RCA[Review Coordination Agent<br/>👥 Peer Review Intelligence]
+            EOA --> |Review Assignment<br/>Editorial Decisions| RCA
+            RCA --> |Review Results<br/>Consensus Reports| EOA
+            EOA --> |Final Approval<br/>Publication Decision| CQA
+        end
+        
+        subgraph "Production & Analytics Layer"
+            PPA[Publishing Production Agent<br/>🚀 Content Intelligence]
+            AMA[Analytics & Monitoring Agent<br/>📊 Intelligence Intelligence]
+            PPA --> |Publication Metrics<br/>Distribution Data| AMA
+            AMA --> |Performance Insights<br/>Optimization Recommendations| EOA
+        end
+        
+        subgraph "Feedback & Optimization Loops"
+            AMA -.-> |Discovery Optimization<br/>Trend Validation| RDA
+            AMA -.-> |Quality Improvement<br/>Process Enhancement| SAA
+            AMA -.-> |Review Optimization<br/>Reviewer Performance| RCA
+            AMA -.-> |Production Enhancement<br/>Distribution Optimization| PPA
+            AMA -.-> |Quality Standards<br/>Compliance Monitoring| CQA
+        end
+        
+        subgraph "External Interfaces"
+            INCI[(INCI Database<br/>15,000+ Ingredients)]
+            REG[(Regulatory Databases<br/>25+ Jurisdictions)]
+            PAT[(Patent Databases<br/>Innovation Tracking)]
+            REV[(Expert Reviewers<br/>500+ Specialists)]
+            IND[(Industry Partners<br/>Commercial Network)]
+            
+            RDA <--> INCI
+            RDA <--> REG
+            RDA <--> PAT
+            RCA <--> REV
+            PPA <--> IND
+        end
+    end
+    
+    %% Styling for different agent types
+    style RDA fill:#e1f5fe,stroke:#01579b,stroke-width:3px
+    style SAA fill:#f3e5f5,stroke:#4a148c,stroke-width:3px
+    style EOA fill:#fff3e0,stroke:#e65100,stroke-width:3px
+    style RCA fill:#e8f5e8,stroke:#1b5e20,stroke-width:3px
+    style CQA fill:#fff8e1,stroke:#f57f17,stroke-width:3px
+    style PPA fill:#fce4ec,stroke:#880e4f,stroke-width:3px
+    style AMA fill:#f1f8e9,stroke:#33691e,stroke-width:3px
+    
+    %% External database styling
+    style INCI fill:#e0f2f1,stroke:#00695c
+    style REG fill:#fff3e0,stroke:#ef6c00
+    style PAT fill:#f3e5f5,stroke:#7b1fa2
+    style REV fill:#e8eaf6,stroke:#3f51b5
+    style IND fill:#fff8e1,stroke:#f9a825
+

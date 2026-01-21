@@ -1,0 +1,253 @@
+name: SKZ Integration Issue Generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry mode (no issues created)'
+        required: false
+        default: 'false'
+        type: boolean
+  push:
+    paths:
+      - 'SKZ_INTEGRATION_STRATEGY.md'
+    branches:
+      - main
+
+jobs:
+  generate-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse SKZ strategy and create issues
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            
+            // Read and parse SKZ_INTEGRATION_STRATEGY.md
+            const strategyContent = fs.readFileSync('SKZ_INTEGRATION_STRATEGY.md', 'utf8');
+            
+            console.log('Parsing SKZ Integration Strategy...');
+            
+            // Parse phases from the markdown
+            const phases = [];
+            const lines = strategyContent.split('\n');
+            let currentPhase = null;
+            let currentTasks = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+              const line = lines[i].trim();
+              
+              // Detect phase headers (e.g., "#### Phase 1: Foundation Setup")
+              if (line.match(/^#### Phase \d+:/)) {
+                // Save previous phase if exists
+                if (currentPhase) {
+                  phases.push({
+                    ...currentPhase,
+                    tasks: currentTasks
+                  });
+                }
+                
+                // Start new phase
+                const phaseMatch = line.match(/^#### (Phase \d+): (.+)/);
+                if (phaseMatch) {
+                  currentPhase = {
+                    id: phaseMatch[1].toLowerCase().replace(' ', '-'),
+                    title: `${phaseMatch[1]}: ${phaseMatch[2]}`,
+                    description: '',
+                    status: 'pending'
+                  };
+                  currentTasks = [];
+                }
+              }
+              
+              // Detect task items (e.g., "- [ ] Create SKZ plugin framework")
+              else if (line.match(/^- \[[ x]\]/)) {
+                const taskMatch = line.match(/^- \[([x ])\] (.+)/);
+                if (taskMatch && currentPhase) {
+                  const isCompleted = taskMatch[1] === 'x';
+                  const taskTitle = taskMatch[2];
+                  
+                  if (!isCompleted) { // Only create issues for incomplete tasks
+                    currentTasks.push({
+                      title: taskTitle,
+                      completed: false,
+                      tensorDoF: Math.floor(Math.random() * 10) + 1, // Random DoF for demo
+                      acceptanceCriteria: [
+                        `Complete implementation of: ${taskTitle}`,
+                        'Verify functionality through testing',
+                        'Update documentation as needed',
+                        'Ensure integration with existing SKZ framework'
+                      ]
+                    });
+                  }
+                }
+              }
+            }
+            
+            // Add last phase
+            if (currentPhase) {
+              phases.push({
+                ...currentPhase,
+                tasks: currentTasks
+              });
+            }
+            
+            console.log(`Found ${phases.length} phases to process`);
+            
+            const dryRun = '${{ inputs.dry_run }}' === 'true';
+            const createdIssues = [];
+            
+            // Create issues for each phase and its tasks
+            for (const phase of phases) {
+              if (phase.tasks.length === 0) {
+                console.log(`Skipping ${phase.title} - no incomplete tasks`);
+                continue;
+              }
+              
+              console.log(`Processing ${phase.title} with ${phase.tasks.length} tasks`);
+              
+              // Create parent epic issue for the phase
+              const epicBody = `# ${phase.title}
+            
+            ## Overview
+            This epic tracks the completion of ${phase.title} in the SKZ Integration project.
+            
+            ## Sub-Tasks
+            This epic contains ${phase.tasks.length} sub-tasks that need to be completed.
+            
+            ## Phase Attention Weight
+            \`phase_attention: ${Math.random().toFixed(2)}\`
+            
+            ## Acceptance Criteria
+            - [ ] All sub-tasks in this phase are completed
+            - [ ] Integration tests pass for this phase
+            - [ ] Documentation is updated
+            - [ ] Ready for next phase deployment
+            
+            ## Sub-Issues
+            <!-- Sub-issues will be linked here automatically -->
+            `;
+              
+              let epicIssue = null;
+              
+              if (!dryRun) {
+                epicIssue = await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: `Epic: ${phase.title}`,
+                  body: epicBody,
+                  labels: ['epic', 'skz-integration', phase.id]
+                });
+                
+                console.log(`Created epic issue #${epicIssue.data.number}: ${epicIssue.data.title}`);
+                createdIssues.push(epicIssue.data);
+              } else {
+                console.log(`[DRY RUN] Would create epic: ${phase.title}`);
+              }
+              
+              // Create sub-issues for each task
+              for (const task of phase.tasks) {
+                const taskBody = `# ${task.title}
+            
+            ## Description
+            This task is part of ${phase.title} in the SKZ Integration workflow.
+            
+            ## Actionable Steps
+            1. Analyze requirements for: ${task.title}
+            2. Design implementation approach
+            3. Implement the functionality
+            4. Test the implementation
+            5. Update documentation
+            6. Verify integration with SKZ framework
+            
+            ## Acceptance Criteria
+            ${task.acceptanceCriteria.map(criteria => `- [ ] ${criteria}`).join('\n')}
+            
+            ## Tensor Degrees of Freedom (DoF)
+            \`tensor_dof: ${task.tensorDoF}\`
+            
+            ## Related Epic
+            ${epicIssue ? `Part of Epic #${epicIssue.data.number}` : `Part of Epic: ${phase.title}`}
+            
+            ## Technical Notes
+            - Ensure compatibility with existing OJS installation
+            - Follow SKZ autonomous agents framework patterns
+            - Implement proper error handling and logging
+            - Consider performance implications
+            `;
+                
+                if (!dryRun) {
+                  const taskIssue = await github.rest.issues.create({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    title: task.title,
+                    body: taskBody,
+                    labels: ['task', 'skz-integration', phase.id, `tensor-dof-${task.tensorDoF}`]
+                  });
+                  
+                  console.log(`Created task issue #${taskIssue.data.number}: ${taskIssue.data.title}`);
+                  createdIssues.push(taskIssue.data);
+                  
+                  // Add comment to epic linking the sub-issue
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: epicIssue.data.number,
+                    body: `Sub-task created: #${taskIssue.data.number} - ${taskIssue.data.title}`
+                  });
+                } else {
+                  console.log(`[DRY RUN] Would create task: ${task.title}`);
+                }
+              }
+            }
+            
+            // Create summary issue
+            const summaryBody = `# SKZ Integration Task Generator - Execution Summary
+            
+            ## Generated Issues
+            This run generated ${createdIssues.length} issues across ${phases.length} phases.
+            
+            ## Statistics
+            - Total Phases Processed: ${phases.length}
+            - Total Issues Created: ${createdIssues.length}
+            - Epic Issues: ${phases.filter(p => p.tasks.length > 0).length}
+            - Task Issues: ${createdIssues.length - phases.filter(p => p.tasks.length > 0).length}
+            
+            ## Created Issues
+            ${createdIssues.map(issue => `- #${issue.number}: ${issue.title}`).join('\n')}
+            
+            ## Next Steps
+            1. Review generated issues for accuracy
+            2. Assign team members to appropriate tasks
+            3. Set up project board for tracking
+            4. Begin phase execution according to SKZ Integration Strategy
+            
+            ## Automation Details
+            - Triggered by: ${context.eventName}
+            - Run mode: ${dryRun ? 'Dry Run' : 'Production'}
+            - Repository: ${context.repo.owner}/${context.repo.repo}
+            - Workflow: SKZ Integration Issue Generator
+            `;
+            
+            if (!dryRun && createdIssues.length > 0) {
+              const summaryIssue = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `SKZ Integration Task Generator - Summary (${new Date().toISOString().split('T')[0]})`,
+                body: summaryBody,
+                labels: ['summary', 'skz-integration', 'automation']
+              });
+              
+              console.log(`Created summary issue #${summaryIssue.data.number}`);
+            } else if (dryRun) {
+              console.log('[DRY RUN] Summary of what would be created:');
+              console.log(summaryBody);
+            }
+            
+            console.log(`Task generation completed. ${dryRun ? 'Dry run mode - no issues created.' : `Created ${createdIssues.length} issues.`}`);
+            

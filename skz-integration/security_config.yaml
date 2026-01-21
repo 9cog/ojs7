@@ -1,0 +1,17 @@
+security:
+  api_security:
+    allowed_origins: []
+    enable_cors: false
+    require_signature: true
+    signature_algorithm: sha256
+    timestamp_tolerance_seconds: 300
+  authentication:
+    enable_rate_limiting: true
+    jwt_algorithm: HS256
+    jwt_expiry_hours: 24
+    max_requests_per_minute: 100
+    require_https: true
+  encryption:
+    algorithm: AES-256-GCM
+    key_rotation_days: 90
+    secure_random_source: /dev/urandom

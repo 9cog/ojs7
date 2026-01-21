@@ -1,0 +1,380 @@
+/**
+ * SKZ Status Indicators Styles
+ * Styles for various status indicators and badges
+ */
+
+/* Status Indicators */
+.skz-status-indicator {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 12px;
+	font-weight: 500;
+	
+	&.operational {
+		color: var(--skz-agent-success);
+	}
+	
+	&.warning {
+		color: var(--skz-agent-warning);
+	}
+	
+	&.error {
+		color: var(--skz-agent-error);
+	}
+	
+	&.maintenance {
+		color: var(--skz-agent-secondary);
+	}
+}
+
+/* Status Badges */
+.skz-stage-badge {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: var(--skz-agent-border-radius);
+	font-size: 11px;
+	font-weight: 500;
+	text-transform: capitalize;
+	
+	&.submission {
+		background: #dbeafe;
+		color: #1e40af;
+	}
+	
+	&.editorial_review {
+		background: #fef3c7;
+		color: #d97706;
+	}
+	
+	&.peer_review {
+		background: #d1fae5;
+		color: #059669;
+	}
+	
+	&.copyediting {
+		background: #fce7f3;
+		color: #be185d;
+	}
+	
+	&.production {
+		background: #e0e7ff;
+		color: #5b21b6;
+	}
+	
+	&.published {
+		background: #dcfce7;
+		color: #166534;
+	}
+}
+
+/* Progress Bars */
+.skz-progress-container {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 8px 0;
+}
+
+.skz-progress-bar {
+	flex: 1;
+	height: 6px;
+	background: #e5e7eb;
+	border-radius: 3px;
+	overflow: hidden;
+	position: relative;
+}
+
+.skz-progress-fill {
+	height: 100%;
+	background: linear-gradient(90deg, var(--skz-agent-primary), var(--skz-agent-success));
+	border-radius: 3px;
+	transition: width 0.5s ease;
+	position: relative;
+	
+	&::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+		animation: progressShine 2s infinite;
+	}
+}
+
+.skz-progress-text {
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--skz-agent-text);
+	min-width: 30px;
+}
+
+/* Activity Timeline */
+.skz-timeline-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin-bottom: 12px;
+	
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.skz-timeline-marker {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	margin-top: 4px;
+	flex-shrink: 0;
+	
+	&.research_discovery {
+		background: #3b82f6;
+	}
+	
+	&.submission_assistant {
+		background: #8b5cf6;
+	}
+	
+	&.editorial_orchestration {
+		background: #f59e0b;
+	}
+	
+	&.review_coordination {
+		background: #10b981;
+	}
+	
+	&.content_quality {
+		background: #f97316;
+	}
+	
+	&.publishing_production {
+		background: #ec4899;
+	}
+	
+	&.analytics_monitoring {
+		background: #84cc16;
+	}
+}
+
+.skz-timeline-content {
+	flex: 1;
+	
+	.skz-action-text {
+		display: block;
+		font-size: 13px;
+		color: var(--skz-agent-text);
+		margin-bottom: 2px;
+	}
+	
+	.skz-action-time {
+		font-size: 11px;
+		color: var(--skz-agent-secondary);
+	}
+}
+
+/* Activity Summary */
+.skz-activity-summary {
+	display: flex;
+	gap: 16px;
+	margin: 8px 0;
+}
+
+.skz-activity-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	
+	i {
+		font-size: 10px;
+	}
+	
+	&.text-success {
+		color: var(--skz-agent-success);
+	}
+	
+	&.text-warning {
+		color: var(--skz-agent-warning);
+	}
+	
+	&.text-error {
+		color: var(--skz-agent-error);
+	}
+}
+
+/* Agent Pulse Animation */
+.skz-agent-pulse {
+	width: 8px;
+	height: 8px;
+	background: var(--skz-agent-success);
+	border-radius: 50%;
+	animation: agentPulse 2s infinite;
+	margin-left: auto;
+}
+
+/* Active Agents List */
+.skz-agents-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 8px 0;
+}
+
+.skz-active-agent {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	background: white;
+	border: 1px solid var(--skz-agent-border);
+	border-radius: var(--skz-agent-border-radius);
+	font-size: 12px;
+	
+	.skz-agent-name {
+		flex: 1;
+		font-weight: 500;
+	}
+}
+
+/* Status Icons */
+.skz-status-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	font-size: 8px;
+	
+	&.active {
+		background: var(--skz-agent-success);
+		color: white;
+	}
+	
+	&.warning {
+		background: var(--skz-agent-warning);
+		color: white;
+	}
+	
+	&.error {
+		background: var(--skz-agent-error);
+		color: white;
+	}
+	
+	&.inactive {
+		background: var(--skz-agent-secondary);
+		color: white;
+	}
+}
+
+/* Recommendations */
+.skz-recommendation {
+	display: flex;
+	gap: 12px;
+	padding: 12px;
+	background: #f8fafc;
+	border: 1px solid var(--skz-agent-border);
+	border-radius: var(--skz-agent-border-radius);
+	margin-bottom: 8px;
+	
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.skz-rec-icon {
+	flex-shrink: 0;
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	
+	i {
+		font-size: 14px;
+	}
+}
+
+.skz-rec-content {
+	flex: 1;
+	
+	strong {
+		display: block;
+		font-size: 13px;
+		margin-bottom: 4px;
+		color: var(--skz-agent-text);
+	}
+	
+	p {
+		font-size: 12px;
+		color: var(--skz-agent-secondary);
+		margin: 0;
+		line-height: 1.4;
+	}
+}
+
+/* Status Colors */
+.text-success {
+	color: var(--skz-agent-success) !important;
+}
+
+.text-warning {
+	color: var(--skz-agent-warning) !important;
+}
+
+.text-error {
+	color: var(--skz-agent-error) !important;
+}
+
+.text-info {
+	color: var(--skz-agent-primary) !important;
+}
+
+.text-muted {
+	color: var(--skz-agent-secondary) !important;
+}
+
+/* Animations */
+@keyframes progressShine {
+	0% {
+		left: -100%;
+	}
+	100% {
+		left: 100%;
+	}
+}
+
+@keyframes agentPulse {
+	0%, 100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.7;
+		transform: scale(1.2);
+	}
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.skz-activity-summary {
+		flex-direction: column;
+		gap: 8px;
+	}
+	
+	.skz-recommendation {
+		padding: 8px;
+	}
+	
+	.skz-agents-list {
+		gap: 6px;
+	}
+	
+	.skz-active-agent {
+		padding: 4px 6px;
+		font-size: 11px;
+	}
+}

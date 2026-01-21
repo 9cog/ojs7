@@ -1,0 +1,143 @@
+graph TB
+    subgraph "Orchestration Control Plane"
+        MASTER[Master Orchestrator]
+        SCHEDULER[Task Scheduler]
+        COORDINATOR[Agent Coordinator]
+        DISPATCHER[Event Dispatcher]
+        MONITOR[Health Monitor]
+    end
+    
+    subgraph "Agent Management Layer"
+        REGISTRY[Agent Registry]
+        LIFECYCLE[Lifecycle Manager]
+        CONFIG[Configuration Manager]
+        SCALING[Auto Scaler]
+    end
+    
+    subgraph "Communication Infrastructure"
+        MSG_BUS[Message Bus]
+        API_GW[API Gateway]
+        EVENT_STREAM[Event Stream]
+        WEBHOOK[Webhook Handler]
+    end
+    
+    subgraph "Agent Execution Environment"
+        AGENT_POOL[Agent Pool]
+        RESOURCE_MGR[Resource Manager]
+        ISOLATION[Process Isolation]
+        SECURITY[Security Context]
+    end
+    
+    subgraph "The 7 Autonomous Agents"
+        A1[Research Discovery Agent<br/>INCI & Patent Analysis]
+        A2[Submission Assistant Agent<br/>Quality & Compliance]
+        A3[Editorial Orchestration Agent<br/>Workflow Coordination]
+        A4[Review Coordination Agent<br/>Reviewer Management]
+        A5[Content Quality Agent<br/>Scientific Validation]
+        A6[Publishing Production Agent<br/>Content Processing]
+        A7[Analytics & Monitoring Agent<br/>Performance Intelligence]
+    end
+    
+    subgraph "Data & State Management"
+        STATE_STORE[(Agent State Store)]
+        SHARED_MEM[Shared Memory]
+        PERSISTENCE[(Persistent Storage)]
+        CACHE[(Distributed Cache)]
+    end
+    
+    subgraph "External Integration Points"
+        OJS_HOOKS[OJS Hook System]
+        API_CLIENTS[External APIs]
+        DATABASES[(External Databases)]
+        SERVICES[Third-party Services]
+    end
+    
+    %% Control plane connections
+    MASTER --> SCHEDULER
+    MASTER --> COORDINATOR
+    MASTER --> DISPATCHER
+    MASTER --> MONITOR
+    
+    %% Management layer connections
+    SCHEDULER --> REGISTRY
+    COORDINATOR --> LIFECYCLE
+    DISPATCHER --> CONFIG
+    MONITOR --> SCALING
+    
+    %% Communication infrastructure
+    REGISTRY --> MSG_BUS
+    LIFECYCLE --> API_GW
+    CONFIG --> EVENT_STREAM
+    SCALING --> WEBHOOK
+    
+    %% Agent execution environment
+    MSG_BUS --> AGENT_POOL
+    API_GW --> RESOURCE_MGR
+    EVENT_STREAM --> ISOLATION
+    WEBHOOK --> SECURITY
+    
+    %% Agent deployment
+    AGENT_POOL --> A1
+    AGENT_POOL --> A2
+    AGENT_POOL --> A3
+    AGENT_POOL --> A4
+    AGENT_POOL --> A5
+    AGENT_POOL --> A6
+    AGENT_POOL --> A7
+    
+    %% Data management
+    A1 --> STATE_STORE
+    A2 --> SHARED_MEM
+    A3 --> PERSISTENCE
+    A4 --> CACHE
+    A5 --> STATE_STORE
+    A6 --> SHARED_MEM
+    A7 --> PERSISTENCE
+    
+    %% External integrations
+    A1 --> API_CLIENTS
+    A2 --> OJS_HOOKS
+    A3 --> DATABASES
+    A4 --> SERVICES
+    A5 --> OJS_HOOKS
+    A6 --> DATABASES
+    A7 --> API_CLIENTS
+    
+    %% Monitoring and feedback loops
+    MONITOR -.-> A1
+    MONITOR -.-> A2
+    MONITOR -.-> A3
+    MONITOR -.-> A4
+    MONITOR -.-> A5
+    MONITOR -.-> A6
+    MONITOR -.-> A7
+    
+    A7 -.-> MONITOR
+    A7 -.-> SCALING
+    A7 -.-> COORDINATOR
+    
+    %% Inter-agent communication
+    A1 --> A2
+    A2 --> A3
+    A3 --> A4
+    A4 --> A5
+    A5 --> A6
+    A6 --> A7
+    A7 --> A1
+    
+    %% Styling
+    classDef control fill:#e8f5e8,stroke:#2e7d32,stroke-width:3px
+    classDef management fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef communication fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef execution fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef agents fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    classDef data fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    classDef external fill:#f9fbe7,stroke:#827717,stroke-width:2px
+    
+    class MASTER,SCHEDULER,COORDINATOR,DISPATCHER,MONITOR control
+    class REGISTRY,LIFECYCLE,CONFIG,SCALING management
+    class MSG_BUS,API_GW,EVENT_STREAM,WEBHOOK communication
+    class AGENT_POOL,RESOURCE_MGR,ISOLATION,SECURITY execution
+    class A1,A2,A3,A4,A5,A6,A7 agents
+    class STATE_STORE,SHARED_MEM,PERSISTENCE,CACHE data
+    class OJS_HOOKS,API_CLIENTS,DATABASES,SERVICES external

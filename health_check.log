@@ -1,0 +1,50 @@
+2025-08-06 18:30:29,907 - INFO - ============================================================
+2025-08-06 18:30:29,907 - INFO - SKZ AGENTS FRAMEWORK - HEALTH CHECK
+2025-08-06 18:30:29,907 - INFO - ============================================================
+2025-08-06 18:30:29,908 - INFO - Checking agent health...
+2025-08-06 18:30:33,976 - ERROR - OFFLINE: research_discovery (port 8001) - Connection refused
+2025-08-06 18:30:38,024 - ERROR - OFFLINE: manuscript_analysis (port 8002) - Connection refused
+2025-08-06 18:30:42,071 - ERROR - OFFLINE: peer_review_coordination (port 8003) - Connection refused
+2025-08-06 18:30:46,120 - ERROR - OFFLINE: editorial_decision (port 8004) - Connection refused
+2025-08-06 18:30:50,176 - ERROR - OFFLINE: publication_formatting (port 8005) - Connection refused
+2025-08-06 18:30:54,231 - ERROR - OFFLINE: quality_assurance (port 8006) - Connection refused
+2025-08-06 18:30:58,261 - ERROR - OFFLINE: workflow_orchestration (port 8007) - Connection refused
+2025-08-06 18:30:58,261 - INFO - 
+Checking system resources...
+2025-08-06 18:30:59,348 - INFO - CPU Usage: 19.8%
+2025-08-06 18:30:59,354 - INFO - Memory Usage: 79.1% (6GB / 7GB)
+2025-08-06 18:30:59,354 - INFO - Disk Usage: 80.4% (86GB / 107GB)
+2025-08-06 18:30:59,354 - INFO - ============================================================
+2025-08-06 18:30:59,354 - INFO - HEALTH CHECK SUMMARY
+2025-08-06 18:30:59,354 - INFO - ============================================================
+2025-08-06 18:30:59,354 - INFO - Healthy Agents: 0/7
+2025-08-06 18:30:59,355 - INFO - Health Score: 0.0%
+2025-08-06 18:30:59,355 - INFO - System CPU: 19.8%
+2025-08-06 18:30:59,355 - INFO - System Memory: 79.1%
+2025-08-06 18:30:59,355 - INFO - System Disk: 80.4%
+2025-08-06 18:30:59,355 - ERROR - Overall Status: CRITICAL
+2025-08-06 19:43:05,957 - INFO - ============================================================
+2025-08-06 19:43:05,957 - INFO - SKZ AGENTS FRAMEWORK - HEALTH CHECK
+2025-08-06 19:43:05,957 - INFO - ============================================================
+2025-08-06 19:43:05,958 - INFO - Checking agent health...
+2025-08-06 19:43:07,990 - INFO - HEALTHY: research_discovery (port 8001)
+2025-08-06 19:43:10,020 - INFO - HEALTHY: manuscript_analysis (port 8002)
+2025-08-06 19:43:12,056 - INFO - HEALTHY: peer_review_coordination (port 8003)
+2025-08-06 19:43:14,085 - INFO - HEALTHY: editorial_decision (port 8004)
+2025-08-06 19:43:16,132 - INFO - HEALTHY: publication_formatting (port 8005)
+2025-08-06 19:43:18,155 - INFO - HEALTHY: quality_assurance (port 8006)
+2025-08-06 19:43:20,209 - INFO - HEALTHY: workflow_orchestration (port 8007)
+2025-08-06 19:43:20,209 - INFO - 
+Checking system resources...
+2025-08-06 19:43:21,235 - INFO - CPU Usage: 21.6%
+2025-08-06 19:43:21,253 - INFO - Memory Usage: 82.0% (6GB / 7GB)
+2025-08-06 19:43:21,255 - INFO - Disk Usage: 80.4% (86GB / 107GB)
+2025-08-06 19:43:21,255 - INFO - ============================================================
+2025-08-06 19:43:21,256 - INFO - HEALTH CHECK SUMMARY
+2025-08-06 19:43:21,256 - INFO - ============================================================
+2025-08-06 19:43:21,257 - INFO - Healthy Agents: 7/7
+2025-08-06 19:43:21,257 - INFO - Health Score: 100.0%
+2025-08-06 19:43:21,258 - INFO - System CPU: 21.6%
+2025-08-06 19:43:21,258 - INFO - System Memory: 82.0%
+2025-08-06 19:43:21,259 - INFO - System Disk: 80.4%
+2025-08-06 19:43:21,259 - INFO - Overall Status: EXCELLENT

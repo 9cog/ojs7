@@ -1,0 +1,123 @@
+# SKZ Integration - Specific exclusions
+
+# Python virtual environments
+skz-integration/*/venv/
+skz-integration/*/*/venv/
+skz-integration/*/__pycache__/
+skz-integration/*/*/__pycache__/
+skz-integration/*.pyc
+skz-integration/*/*.pyc
+skz-integration/*/*/*.pyc
+
+# Node.js dependencies and build artifacts
+skz-integration/*/node_modules/
+skz-integration/*/*/node_modules/
+skz-integration/*/dist/
+skz-integration/*/*/dist/
+skz-integration/*/build/
+skz-integration/*/*/build/
+skz-integration/*/.next/
+skz-integration/*/*/.next/
+
+# Logs and temporary files
+skz-integration/logs/
+skz-integration/*/logs/
+skz-integration/*/*/logs/
+skz-integration/*.log
+skz-integration/*/*.log
+skz-integration/*/*/*.log
+skz-integration/tmp/
+skz-integration/*/tmp/
+skz-integration/*/*/tmp/
+
+# Configuration files with sensitive data
+skz-integration/config/production.conf
+skz-integration/config/*.key
+skz-integration/config/*.pem
+skz-integration/config/*.env
+skz-integration/*/.env*
+skz-integration/*/*/.env*
+
+# Database files
+skz-integration/*.db
+skz-integration/*.sqlite
+skz-integration/*.sqlite3
+skz-integration/*/*.db
+skz-integration/*/*.sqlite
+skz-integration/*/*.sqlite3
+
+# OS specific files
+skz-integration/.DS_Store
+skz-integration/*/.DS_Store
+skz-integration/*/*/.DS_Store
+skz-integration/Thumbs.db
+skz-integration/*/Thumbs.db
+skz-integration/*/*/Thumbs.db
+
+# IDE specific files
+skz-integration/.vscode/
+skz-integration/*/.vscode/
+skz-integration/*/*/.vscode/
+skz-integration/.idea/
+skz-integration/*/.idea/
+skz-integration/*/*/.idea/
+skz-integration/*.swp
+skz-integration/*/*.swp
+skz-integration/*/*/*.swp
+skz-integration/*.swo
+skz-integration/*/*.swo
+skz-integration/*/*/*.swo
+
+# Runtime files
+skz-integration/*.pid
+skz-integration/*/*.pid
+skz-integration/*/*/*.pid
+skz-integration/cache/
+skz-integration/*/cache/
+skz-integration/*/*/cache/
+
+# Test coverage and results
+skz-integration/coverage/
+skz-integration/*/coverage/
+skz-integration/*/*/coverage/
+skz-integration/.coverage
+skz-integration/*/.coverage
+skz-integration/*/*/.coverage
+skz-integration/.pytest_cache/
+skz-integration/*/.pytest_cache/
+skz-integration/*/*/.pytest_cache/
+
+# Package manager files that shouldn't be committed
+skz-integration/*/package-lock.json
+skz-integration/*/*/package-lock.json
+skz-integration/*/yarn.lock
+skz-integration/*/*/yarn.lock
+skz-integration/*/pnpm-lock.yaml
+skz-integration/*/*/pnpm-lock.yaml
+
+# Local development overrides
+skz-integration/docker-compose.override.yml
+skz-integration/config/local.conf
+skz-integration/scripts/local-*
+
+# Backup files
+skz-integration/*.bak
+skz-integration/*/*.bak
+skz-integration/*/*/*.bak
+skz-integration/*.backup
+skz-integration/*/*.backup
+skz-integration/*/*/*.backup
+
+# Performance and monitoring data
+skz-integration/monitoring/
+skz-integration/metrics/
+skz-integration/profiling/
+
+# Generated documentation
+skz-integration/docs/generated/
+skz-integration/docs/api/generated/
+
+# Simulation results and temporary data
+skz-integration/simulation_results_*.json
+skz-integration/audit_report_*.json
+skz-integration/temp_*.json

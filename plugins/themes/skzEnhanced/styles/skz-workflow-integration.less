@@ -1,0 +1,567 @@
+/**
+ * SKZ Workflow Integration Styles
+ * Styles for workflow page integration and notifications
+ */
+
+/* Workflow Agent Controls */
+.skz-workflow-agent-controls {
+	background: white;
+	border: 1px solid var(--skz-agent-border);
+	border-radius: var(--skz-agent-border-radius);
+	margin-bottom: 20px;
+	box-shadow: var(--skz-agent-shadow);
+	overflow: hidden;
+}
+
+.skz-controls-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	background: var(--skz-agent-background);
+	border-bottom: 1px solid var(--skz-agent-border);
+	cursor: pointer;
+}
+
+.skz-controls-title {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--skz-agent-text);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	
+	i {
+		color: var(--skz-agent-primary);
+	}
+}
+
+.skz-controls-toggle {
+	background: none;
+	border: none;
+	color: var(--skz-agent-secondary);
+	cursor: pointer;
+	padding: 4px;
+	border-radius: 4px;
+	transition: var(--skz-agent-transition);
+	
+	&:hover {
+		background: var(--skz-agent-border);
+		color: var(--skz-agent-text);
+	}
+}
+
+.skz-controls-content {
+	padding: 16px;
+}
+
+.skz-workflow-progress {
+	margin-bottom: 20px;
+	
+	.skz-progress-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 8px;
+	}
+	
+	.skz-progress-label {
+		font-size: 14px;
+		font-weight: 500;
+		color: var(--skz-agent-text);
+	}
+	
+	.skz-progress-percentage {
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--skz-agent-primary);
+	}
+	
+	.skz-progress-bar {
+		height: 8px;
+		background: #e5e7eb;
+		border-radius: 4px;
+		overflow: hidden;
+	}
+	
+	.skz-progress-fill {
+		height: 100%;
+		background: linear-gradient(90deg, var(--skz-agent-primary), var(--skz-agent-success));
+		border-radius: 4px;
+		transition: width 0.8s ease;
+	}
+}
+
+.skz-section-title {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--skz-agent-text);
+	margin: 0 0 12px 0;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	
+	i {
+		color: var(--skz-agent-primary);
+		font-size: 12px;
+	}
+}
+
+/* Agent Grid */
+.skz-agent-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 12px;
+	margin-bottom: 20px;
+}
+
+.skz-agent-card {
+	background: white;
+	border: 1px solid var(--skz-agent-border);
+	border-radius: var(--skz-agent-border-radius);
+	padding: 12px;
+	transition: var(--skz-agent-transition);
+	
+	&:hover {
+		box-shadow: var(--skz-agent-shadow);
+		border-color: var(--skz-agent-primary);
+	}
+	
+	&.active {
+		border-color: var(--skz-agent-success);
+		background: #f0fdf4;
+	}
+	
+	&.warning {
+		border-color: var(--skz-agent-warning);
+		background: #fffbeb;
+	}
+	
+	&.error {
+		border-color: var(--skz-agent-error);
+		background: #fef2f2;
+	}
+}
+
+.skz-agent-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+	
+	i {
+		font-size: 16px;
+	}
+	
+	.skz-agent-name {
+		flex: 1;
+		font-size: 13px;
+		font-weight: 500;
+		color: var(--skz-agent-text);
+	}
+}
+
+.skz-agent-status-indicator {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+	
+	&.active {
+		background: var(--skz-agent-success);
+		animation: agentPulse 2s infinite;
+	}
+	
+	&.warning {
+		background: var(--skz-agent-warning);
+	}
+	
+	&.error {
+		background: var(--skz-agent-error);
+	}
+	
+	&.inactive {
+		background: var(--skz-agent-secondary);
+	}
+}
+
+.skz-agent-actions {
+	display: flex;
+	gap: 4px;
+}
+
+.skz-action-btn {
+	width: 24px;
+	height: 24px;
+	border: 1px solid var(--skz-agent-border);
+	background: white;
+	border-radius: 4px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: var(--skz-agent-transition);
+	
+	&:hover {
+		background: var(--skz-agent-background);
+		border-color: var(--skz-agent-primary);
+		color: var(--skz-agent-primary);
+	}
+	
+	i {
+		font-size: 10px;
+	}
+}
+
+/* Recommendations */
+.skz-recommendations {
+	margin-bottom: 20px;
+}
+
+.skz-recommendations-content {
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+/* Workflow Actions */
+.skz-workflow-actions {
+	display: flex;
+	gap: 8px;
+}
+
+.skz-action-button {
+	padding: 8px 16px;
+	border-radius: var(--skz-agent-border-radius);
+	font-size: 13px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: var(--skz-agent-transition);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	border: none;
+	
+	&.skz-btn-primary {
+		background: var(--skz-agent-primary);
+		color: white;
+		
+		&:hover {
+			background: darken(var(--skz-agent-primary), 10%);
+			transform: translateY(-1px);
+		}
+	}
+	
+	&.skz-btn-secondary {
+		background: white;
+		color: var(--skz-agent-text);
+		border: 1px solid var(--skz-agent-border);
+		
+		&:hover {
+			background: var(--skz-agent-background);
+			border-color: var(--skz-agent-primary);
+		}
+	}
+}
+
+/* Submission Agent Status Widget */
+.skz-submission-agent-status {
+	margin-bottom: 20px;
+}
+
+.skz-status-widget {
+	background: white;
+	border: 1px solid var(--skz-agent-border);
+	border-radius: var(--skz-agent-border-radius);
+	overflow: hidden;
+	box-shadow: var(--skz-agent-shadow);
+}
+
+.skz-widget-header {
+	padding: 12px 16px;
+	background: var(--skz-agent-background);
+	border-bottom: 1px solid var(--skz-agent-border);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.skz-widget-title {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--skz-agent-text);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	
+	i {
+		color: var(--skz-agent-primary);
+		font-size: 12px;
+	}
+}
+
+.skz-last-update {
+	font-size: 11px;
+	color: var(--skz-agent-secondary);
+}
+
+.skz-widget-content {
+	padding: 16px;
+}
+
+.skz-widget-actions {
+	display: flex;
+	gap: 8px;
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: 1px solid var(--skz-agent-border);
+}
+
+.skz-widget-btn {
+	padding: 6px 12px;
+	border-radius: var(--skz-agent-border-radius);
+	font-size: 12px;
+	cursor: pointer;
+	transition: var(--skz-agent-transition);
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	border: none;
+	
+	&.skz-btn-primary {
+		background: var(--skz-agent-primary);
+		color: white;
+		
+		&:hover {
+			background: darken(var(--skz-agent-primary), 10%);
+		}
+	}
+	
+	&.skz-btn-secondary {
+		background: white;
+		color: var(--skz-agent-text);
+		border: 1px solid var(--skz-agent-border);
+		
+		&:hover {
+			background: var(--skz-agent-background);
+		}
+	}
+}
+
+.skz-label {
+	display: block;
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--skz-agent-text);
+	margin-bottom: 4px;
+}
+
+.skz-widget-unavailable,
+.skz-controls-unavailable {
+	text-align: center;
+	padding: 40px 20px;
+	color: var(--skz-agent-secondary);
+	
+	i {
+		font-size: 24px;
+		margin-bottom: 8px;
+		display: block;
+	}
+	
+	p {
+		margin: 0;
+		font-size: 13px;
+	}
+}
+
+/* Notification System */
+.skz-notification-system {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: 10000;
+	pointer-events: none;
+}
+
+.skz-notifications-container {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-width: 400px;
+}
+
+.skz-notification {
+	background: white;
+	border: 1px solid var(--skz-agent-border);
+	border-radius: var(--skz-agent-border-radius);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	overflow: hidden;
+	pointer-events: auto;
+	opacity: 0;
+	transform: translateX(100%);
+	transition: all 0.3s ease;
+	
+	&.skz-notification-show {
+		opacity: 1;
+		transform: translateX(0);
+	}
+	
+	&.skz-notification-hide {
+		opacity: 0;
+		transform: translateX(100%);
+	}
+	
+	&.skz-notification-success {
+		border-left: 4px solid var(--skz-agent-success);
+	}
+	
+	&.skz-notification-warning {
+		border-left: 4px solid var(--skz-agent-warning);
+	}
+	
+	&.skz-notification-error {
+		border-left: 4px solid var(--skz-agent-error);
+	}
+	
+	&.skz-notification-info {
+		border-left: 4px solid var(--skz-agent-primary);
+	}
+}
+
+.skz-notification-content {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 12px 16px;
+}
+
+.skz-notification-icon {
+	flex-shrink: 0;
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 2px;
+	
+	.skz-notification-success & {
+		color: var(--skz-agent-success);
+	}
+	
+	.skz-notification-warning & {
+		color: var(--skz-agent-warning);
+	}
+	
+	.skz-notification-error & {
+		color: var(--skz-agent-error);
+	}
+	
+	.skz-notification-info & {
+		color: var(--skz-agent-primary);
+	}
+}
+
+.skz-notification-text {
+	flex: 1;
+}
+
+.skz-notification-title {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--skz-agent-text);
+	margin-bottom: 4px;
+}
+
+.skz-notification-message {
+	font-size: 12px;
+	color: var(--skz-agent-secondary);
+	line-height: 1.4;
+}
+
+.skz-notification-close {
+	background: none;
+	border: none;
+	color: var(--skz-agent-secondary);
+	cursor: pointer;
+	padding: 4px;
+	border-radius: 4px;
+	transition: var(--skz-agent-transition);
+	
+	&:hover {
+		background: var(--skz-agent-background);
+		color: var(--skz-agent-text);
+	}
+}
+
+.skz-notification-progress {
+	height: 2px;
+	background: var(--skz-agent-border);
+	position: relative;
+	
+	&::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		background: var(--skz-agent-primary);
+		animation: notificationProgress 5s linear forwards;
+	}
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.skz-agent-grid {
+		grid-template-columns: 1fr;
+		gap: 8px;
+	}
+	
+	.skz-workflow-actions {
+		flex-direction: column;
+	}
+	
+	.skz-notification-system {
+		left: 10px;
+		right: 10px;
+		top: 10px;
+	}
+	
+	.skz-notifications-container {
+		max-width: none;
+	}
+	
+	.skz-controls-content {
+		padding: 12px;
+	}
+	
+	.skz-widget-content {
+		padding: 12px;
+	}
+}
+
+/* Animations */
+@keyframes notificationProgress {
+	from {
+		width: 100%;
+	}
+	to {
+		width: 0%;
+	}
+}
+
+/* Accessibility */
+.skz-workflow-agent-controls button:focus,
+.skz-status-widget button:focus,
+.skz-notification button:focus {
+	outline: 2px solid var(--skz-agent-primary);
+	outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+	.skz-notification-system,
+	.skz-status-toggle {
+		display: none !important;
+	}
+}

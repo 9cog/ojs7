@@ -1,0 +1,77 @@
+graph TD
+    subgraph "Editorial Orchestration Agent - Editorial Management"
+        A3[Receive Manuscript from Submission Assistant] --> B3[Review Quality Assessment]
+        B3 --> C3[Check Editorial Calendar]
+        C3 --> D3[Assess Strategic Fit]
+        D3 --> E3{Editorial Decision}
+        
+        E3 -->|Accept for Review| F3[Assign to Review Coordination]
+        E3 -->|Request Special Review| G3[Assign to Content Quality]
+        E3 -->|Reject| H3[Generate Rejection Letter]
+        
+        F3 --> I3[Monitor Review Progress]
+        G3 --> J3[Await Quality Assessment]
+        H3 --> K3[Send to Author with Feedback]
+        
+        I3 --> L3{Review Status Check}
+        L3 -->|Reviews Complete| M3[Receive Review Summary]
+        L3 -->|Reviews Pending| N3[Check Review Deadlines]
+        L3 -->|Reviews Overdue| O3[Reviewer Follow-up]
+        
+        J3 --> P3{Quality Assessment Result}
+        P3 -->|Approved| F3
+        P3 -->|Rejected| H3
+        P3 -->|Needs Revision| Q3[Request Author Revision]
+        
+        M3 --> R3[Editorial Decision Making]
+        R3 --> S3{Final Decision}
+        S3 -->|Accept| T3[Send to Content Quality for Final Check]
+        S3 -->|Minor Revisions| U3[Request Minor Revisions]
+        S3 -->|Major Revisions| V3[Request Major Revisions]
+        S3 -->|Reject| W3[Generate Detailed Rejection]
+        
+        N3 --> X3{Deadline Status}
+        X3 -->|Within Deadline| Y3[Continue Monitoring]
+        X3 -->|Approaching Deadline| Z3[Send Reminder]
+        X3 -->|Past Deadline| O3
+        
+        O3 --> AA3[Escalate to Review Coordination]
+        AA3 --> BB3[Find Replacement Reviewer]
+        BB3 --> CC3[Assign New Reviewer]
+        
+        T3 --> DD3[Await Final Quality Check]
+        U3 --> EE3[Monitor Revision Process]
+        V3 --> EE3
+        W3 --> FF3[Close Manuscript File]
+        
+        DD3 --> GG3{Final Quality Result}
+        GG3 -->|Approved| HH3[Send to Publishing Production]
+        GG3 -->|Issues Found| II3[Address Quality Concerns]
+        
+        EE3 --> JJ3{Revision Received}
+        JJ3 -->|Yes| KK3[Re-evaluate Manuscript]
+        JJ3 -->|Timeout| LL3[Close with Incomplete Status]
+        
+        Y3 --> I3
+        Z3 --> I3
+        CC3 --> I3
+        Q3 --> MM3[Author Communication]
+        K3 --> MM3
+        MM3 --> NN3[Update Editorial Database]
+        
+        HH3 --> OO3[Editorial Success Metrics]
+        II3 --> OO3
+        KK3 --> OO3
+        LL3 --> OO3
+        FF3 --> OO3
+        NN3 --> OO3
+        OO3 --> PP3[End Editorial Cycle]
+    end
+    
+    style A3 fill:#e3f2fd
+    style PP3 fill:#f3e5f5
+    style E3 fill:#fff3e0
+    style S3 fill:#fff3e0
+    style T3 fill:#e8f5e8
+    style HH3 fill:#e8f5e8
+
