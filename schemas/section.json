@@ -1,3 +1,22 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:27a624f7736e4bf5693875b3d9762c7fbe9e53f74acd6de7bf0bc01079083c73
-size 430
+{
+	"title": "Section",
+	"description": "A journal section. Typically a section within an issue, such as Articles or Reviews.",
+	"properties": {
+		"id": {
+			"type": "integer",
+			"apiSummary": true
+		},
+		"abbrev": {
+			"$ref": "#/definitions/LocaleObject",
+			"apiSummary": true
+		},
+		"title": {
+			"$ref": "#/definitions/LocaleObject",
+			"apiSummary": true
+		},
+		"seq": {
+			"type": "integer",
+			"apiSummary": true
+		}
+	}
+}

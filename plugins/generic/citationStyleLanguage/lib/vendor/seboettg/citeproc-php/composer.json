@@ -1,3 +1,69 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:df12d6729a0a8cd4c4cf5239d75355027359aa79ebfe8d1a560f4754c3521154
-size 1844
+{
+    "name": "seboettg/citeproc-php",
+    "description": "Full-featured CSL processor (https://citationstyles.org)",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sebastian Böttger",
+            "email": "seboettg@gmail.com",
+            "homepage": "http://sebastianboettger.net",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/seboettg/citeproc-php/issues"
+    },
+    "autoload": {
+        "psr-4": {
+            "Seboettg\\CiteProc\\": "src/"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Seboettg\\CiteProc\\": "tests/src/"
+        }
+    },
+    "require": {
+        "seboettg/collection": ">=3.0",
+        "myclabs/php-enum": "^1.8",
+        "ext-simplexml": "*",
+        "ext-json": "*",
+        "php": ">=7.3",
+        "ext-mbstring": "*"
+    },
+    "require-dev": {
+        "php-coveralls/php-coveralls": "^1",
+        "phpunit/phpunit": "^8.5",
+        "squizlabs/php_codesniffer": "^3.5",
+        "phpmd/phpmd": "^2.8"
+    },
+    "suggest": {
+        "ext-intl": "*",
+        "symfony/polyfill-mbstring": "^1.10"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "./install.sh styles-distribution",
+            "./install.sh locales",
+            "@compile-test-cases",
+            "chmod +x vendor/bin/phpunit"
+        ],
+        "post-update-cmd": [
+            "./install.sh styles-distribution",
+            "./install.sh locales",
+            "@compile-test-cases",
+            "chmod +x vendor/bin/phpunit"
+        ],
+        "test": "vendor/bin/phpunit -c phpunit.xml",
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "compile-test-cases": "cd ./tests/fixtures/basic-tests/; ./processor.py -g"
+    }
+}

@@ -1,30 +1,17 @@
 # Git LFS Configuration for OJS 7.1 with SKZ Integration
-# This file ensures large files are stored in Git Large File Storage
+#
+# IMPORTANT: Do NOT track *.json via LFS — composer.json, package.json,
+# schemas/*.json, and other small JSON files must remain in regular Git
+# for the repository to clone and function correctly.
+#
+# Only track genuinely large binary files that may exceed GitHub limits.
+# Text files (JSON, CSV, log, txt, md) should use .gitignore instead.
 
-# Large JSON files (audit results, test data)
-*.json filter=lfs diff=lfs merge=lfs -text
-audit_results.json filter=lfs diff=lfs merge=lfs -text
-
-# Tree files and directory listings
-tree.txt filter=lfs diff=lfs merge=lfs -text
-treeu.txt filter=lfs diff=lfs merge=lfs -text
-tree.md filter=lfs diff=lfs merge=lfs -text
-
-# Binary files and libraries
-*.dll filter=lfs diff=lfs merge=lfs -text
-*.so filter=lfs diff=lfs merge=lfs -text
-*.dylib filter=lfs diff=lfs merge=lfs -text
-
-# AI Model files
+# AI Model files (genuinely large binaries)
 *.model filter=lfs diff=lfs merge=lfs -text
 *.h5 filter=lfs diff=lfs merge=lfs -text
 *.pkl filter=lfs diff=lfs merge=lfs -text
 *.onnx filter=lfs diff=lfs merge=lfs -text
-*.bin filter=lfs diff=lfs merge=lfs -text
-
-# Large data files
-*.csv filter=lfs diff=lfs merge=lfs -text
-*.parquet filter=lfs diff=lfs merge=lfs -text
 
 # Archives and packages
 *.zip filter=lfs diff=lfs merge=lfs -text
@@ -43,14 +30,5 @@ tree.md filter=lfs diff=lfs merge=lfs -text
 *.tiff filter=lfs diff=lfs merge=lfs -text
 *.tif filter=lfs diff=lfs merge=lfs -text
 
-# Database files
-*.db filter=lfs diff=lfs merge=lfs -text
-*.sqlite filter=lfs diff=lfs merge=lfs -text
-*.sqlite3 filter=lfs diff=lfs merge=lfs -text
-
-# Log files that might get large
-*.log filter=lfs diff=lfs merge=lfs -text
-
-# Backup files
-*.bak filter=lfs diff=lfs merge=lfs -text
-*.backup filter=lfs diff=lfs merge=lfs -text
+# Large data files
+*.parquet filter=lfs diff=lfs merge=lfs -text

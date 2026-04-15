@@ -1,3 +1,28 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a2cd7fa81b78d558d2cf9155c7f947c6413c269cc33cbed5fa1fc5b8c82add1f
-size 469
+{
+	"require": {
+		"citation-style-language/locales":"@dev",
+		"seboettg/citeproc-php": "^2.5",
+		"seboettg/collection": "^3.1",
+		"myclabs/php-enum": "^1.8"
+	},
+	"config": {
+		"vendor-dir": "lib/vendor",
+		"platform": {
+			"php": "7.3.0"
+		}
+	},
+	"repositories": [
+		{
+			"type": "package",
+			"package": {
+				"name": "citation-style-language/locales",
+				"version":"1.0.0",
+				"source": {
+					"type": "git",
+					"url": "https://github.com/citation-style-language/locales.git",
+					"reference": "master"
+				}
+			}
+		}
+	]
+}

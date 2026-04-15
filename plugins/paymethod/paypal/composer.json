@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0123033186cb14079e92cbbb3dd2560459adf40182f63c41cf92a86ef48f7edc
-size 177
+{
+    "require": {
+        "omnipay/paypal": "~3.0",
+        "php-http/guzzle6-adapter": "~2.0"
+    }
+}

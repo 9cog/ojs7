@@ -1,3 +1,26 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d7ed4d1fdc4c839c1967143f303d57533d72f58bcc68450a0c68182db0d6c2c0
-size 465
+{
+	"name": "ralouphie/getallheaders",
+	"description": "A polyfill for getallheaders.",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Ralph Khattar",
+			"email": "ralph.khattar@gmail.com"
+		}
+	],
+	"require": {
+		"php": ">=5.6"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^5 || ^6.5",
+		"php-coveralls/php-coveralls": "^2.1"
+	},
+	"autoload": {
+		"files": ["src/getallheaders.php"]
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"getallheaders\\Tests\\": "tests/"
+		}
+	}
+}

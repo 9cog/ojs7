@@ -1,3 +1,41 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:05565216fea7b1756a35e0389bda476bc4d0386810d81060cba3e38994e28b60
-size 1004
+{
+    "name": "symfony/polyfill-mbstring",
+    "type": "library",
+    "description": "Symfony polyfill for the Mbstring extension",
+    "keywords": ["polyfill", "shim", "compatibility", "portable", "mbstring"],
+    "homepage": "https://symfony.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nicolas Grekas",
+            "email": "p@tchwork.com"
+        },
+        {
+            "name": "Symfony Community",
+            "homepage": "https://symfony.com/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=7.1"
+    },
+    "provide": {
+        "ext-mbstring": "*"
+    },
+    "autoload": {
+        "psr-4": { "Symfony\\Polyfill\\Mbstring\\": "" },
+        "files": [ "bootstrap.php" ]
+    },
+    "suggest": {
+        "ext-mbstring": "For best performance"
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.27-dev"
+        },
+        "thanks": {
+            "name": "symfony/polyfill",
+            "url": "https://github.com/symfony/polyfill"
+        }
+    }
+}

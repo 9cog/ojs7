@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5cc7914379f892f1ae05aa249a8ae0fedb8d27ad758a64f61558d0e36c62ec65
-size 958
+{
+  "name": "skz-ai-inference-node",
+  "version": "1.0.0",
+  "description": "Production AI inference engine for SKZ autonomous agents using node-llama-cpp",
+  "main": "ai-engine.js",
+  "scripts": {
+    "start": "node ai-engine.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "node-llama-cpp": "^2.8.0",
+    "winston": "^3.11.0",
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
