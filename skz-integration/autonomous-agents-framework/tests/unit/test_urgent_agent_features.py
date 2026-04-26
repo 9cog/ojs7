@@ -4,10 +4,10 @@ Validates the implementation of urgent agent features
 """
 
 import pytest
+np = pytest.importorskip("numpy")
 import sys
 import os
 import json
-import numpy as np
 from datetime import datetime
 from unittest.mock import Mock, patch
 

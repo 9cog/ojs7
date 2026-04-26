@@ -5,7 +5,10 @@ Advanced machine learning and adaptive learning capabilities
 import asyncio
 import logging
 import json
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    np = None  # type: ignore[assignment]
 from typing import Dict, List, Optional, Any, Tuple, Union
 from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta
@@ -77,7 +80,30 @@ class LearningSystem:
             logger.info(f"Recorded learning event {event.event_id}")
         except Exception as e:
             logger.error(f"Error recording learning event: {e}")
-    
+
+    async def record_event(self, event_data: Union[LearningEvent, Dict[str, Any]]) -> Union[LearningEvent, str]:
+        """Record an event; accepts a LearningEvent or a plain dict for convenience.
+
+        Returns the LearningEvent that was recorded.
+        """
+        if isinstance(event_data, LearningEvent):
+            learning_event = event_data
+        else:
+            learning_event = LearningEvent(
+                event_id=event_data.get('event_id', f"evt_{datetime.now().timestamp()}"),
+                agent_id=event_data.get('agent_id', 'unknown'),
+                action_type=event_data.get('action_type', 'generic'),
+                input_features=event_data.get('input_features', {}),
+                output_result=event_data.get('output_result'),
+                feedback_score=float(event_data.get('feedback_score', 0.0)),
+                context=event_data.get('context', {}),
+                timestamp=event_data.get('timestamp', datetime.now().isoformat()),
+                success=bool(event_data.get('success', True)),
+                execution_time=float(event_data.get('execution_time', 0.0)),
+            )
+        await self.record_learning_event(learning_event)
+        return learning_event
+
     async def get_action_recommendation(self, agent_id: str, context: Dict[str, Any], action_type: str) -> Dict[str, Any]:
         """Get ML-based action recommendations"""
         try:

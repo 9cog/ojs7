@@ -4,7 +4,12 @@ Phase 2 Critical Component - Enables continuous learning and improvement
 """
 
 import json
-import numpy as np
+try:
+    import numpy as np
+    _NP_AVAILABLE = True
+except ImportError:
+    np = None  # type: ignore[assignment]
+    _NP_AVAILABLE = False
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime, timedelta
 import logging
@@ -57,10 +62,12 @@ class ReinforcementLearner:
         
     def get_action(self, state: str, available_actions: List[str]) -> str:
         """Get action using epsilon-greedy policy"""
+        import random
         with self.lock:
-            if np.random.random() < self.epsilon:
+            if (_NP_AVAILABLE and np.random.random() < self.epsilon) or \
+               (not _NP_AVAILABLE and random.random() < self.epsilon):
                 # Exploration: random action
-                return np.random.choice(available_actions)
+                return np.random.choice(available_actions) if _NP_AVAILABLE else random.choice(available_actions)
             else:
                 # Exploitation: best action
                 return max(available_actions, key=lambda a: self.q_table[state][a])
@@ -313,8 +320,11 @@ class MetaLearner:
             # Analyze performance trends
             if len(self.performance_history) >= 5:
                 recent_performance = self.performance_history[-5:]
-                avg_performance = np.mean([p['performance'].get('success_rate', 0.5) 
-                                        for p in recent_performance])
+                avg_performance = (sum(p['performance'].get('success_rate', 0.5) 
+                                       for p in recent_performance) / len(recent_performance)
+                                   if _NP_AVAILABLE is False else
+                                   np.mean([p['performance'].get('success_rate', 0.5) 
+                                           for p in recent_performance]))
                 
                 # Adjust learning parameters based on performance
                 strategy_adjustments = {}
@@ -357,7 +367,8 @@ class MetaLearner:
             
             insights = {
                 'current_performance': recent_performance[-1] if recent_performance else 0.5,
-                'average_performance': np.mean(recent_performance),
+                'average_performance': (np.mean(recent_performance) if _NP_AVAILABLE and recent_performance
+                                        else sum(recent_performance) / len(recent_performance) if recent_performance else 0.0),
                 'performance_trend': 'improving' if len(recent_performance) >= 2 and 
                                    recent_performance[-1] > recent_performance[0] else 'stable',
                 'learning_efficiency': len(self.performance_history),
@@ -374,7 +385,8 @@ class MetaLearner:
             recommendations.append("Need more data for meaningful analysis")
             return recommendations
         
-        avg_performance = np.mean(performance_history)
+        avg_performance = (np.mean(performance_history) if _NP_AVAILABLE
+                           else sum(performance_history) / len(performance_history))
         
         if avg_performance < 0.6:
             recommendations.extend([

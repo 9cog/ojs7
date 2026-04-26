@@ -18,6 +18,7 @@ try:
     import numpy as np
     NUMPY_AVAILABLE = True
 except ImportError:
+    np = None  # type: ignore[assignment]
     NUMPY_AVAILABLE = False
 
 try:
@@ -874,7 +875,7 @@ class TrendPredictor:
             logger.error(f"Error in transformer growth prediction: {e}")
             return {'predicted_growth_rate': 0.0}
     
-    def _extract_trend_features(self, documents: List[Dict[str, Any]]) -> np.ndarray:
+    def _extract_trend_features(self, documents: List[Dict[str, Any]]) -> Any:
         """Extract features for trend analysis"""
         features = []
         
@@ -984,7 +985,7 @@ class TrendPredictor:
         
         return total_expertise / len(authors)
     
-    def _identify_trending_topics(self, features: np.ndarray) -> List[str]:
+    def _identify_trending_topics(self, features: Any) -> List[str]:
         """Identify trending topics using clustering"""
         try:
             if len(features) < 3:

@@ -5,7 +5,12 @@ Advanced semantic search and knowledge graph for academic research
 import asyncio
 import logging
 import json
-import numpy as np
+try:
+    import numpy as np
+    _NP_AVAILABLE = True
+except ImportError:
+    np = None  # type: ignore[assignment]
+    _NP_AVAILABLE = False
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
@@ -480,8 +485,10 @@ class ResearchVectorDB:
         
         if len(sorted_months) >= 2:
             # Calculate month-over-month growth
-            recent_avg = np.mean(citation_trends[sorted_months[-1]]) if citation_trends[sorted_months[-1]] else 0
-            previous_avg = np.mean(citation_trends[sorted_months[-2]]) if citation_trends[sorted_months[-2]] else 0
+            def _mean(lst):
+                return (np.mean(lst) if _NP_AVAILABLE else sum(lst) / len(lst)) if lst else 0
+            recent_avg = _mean(citation_trends[sorted_months[-1]])
+            previous_avg = _mean(citation_trends[sorted_months[-2]])
             
             if previous_avg > 0:
                 mom_growth = (recent_avg - previous_avg) / previous_avg
@@ -490,13 +497,21 @@ class ResearchVectorDB:
             # Calculate overall trend slope
             monthly_avgs = []
             for month in sorted_months:
-                avg_citations = np.mean(citation_trends[month]) if citation_trends[month] else 0
-                monthly_avgs.append(avg_citations)
+                monthly_avgs.append(_mean(citation_trends[month]))
             
             if len(monthly_avgs) > 1:
                 # Simple linear trend
-                x = np.arange(len(monthly_avgs))
-                trend_slope = np.polyfit(x, monthly_avgs, 1)[0]
+                if _NP_AVAILABLE:
+                    x = np.arange(len(monthly_avgs))
+                    trend_slope = np.polyfit(x, monthly_avgs, 1)[0]
+                else:
+                    n = len(monthly_avgs)
+                    x_vals = list(range(n))
+                    x_mean = sum(x_vals) / n
+                    y_mean = sum(monthly_avgs) / n
+                    num = sum((x_vals[i] - x_mean) * (monthly_avgs[i] - y_mean) for i in range(n))
+                    den = sum((x_vals[i] - x_mean) ** 2 for i in range(n))
+                    trend_slope = num / den if den else 0.0
                 indicators['trend_slope'] = trend_slope
         
         return indicators
