@@ -40,11 +40,10 @@ def test_workflows_are_valid_yaml(repo_root: Path) -> None:
             except yaml.YAMLError as exc:  # pragma: no cover - explicit failure
                 pytest.fail(f"{path} is not valid YAML: {exc}")
         assert isinstance(doc, dict), f"{path} must parse to a mapping"
-        # PyYAML parses bare `on:` as boolean True; tolerate both spellings.
         assert "name" in doc, f"{path} is missing a top-level 'name'"
-        assert (
-            "on" in doc or True in doc
-        ), f"{path} is missing a top-level 'on' trigger"
+        # PyYAML parses bare `on:` as the boolean key True; tolerate both spellings.
+        has_on = "on" in doc or doc.get(True) is not None
+        assert has_on, f"{path} is missing a top-level 'on' trigger"
         assert "jobs" in doc and isinstance(doc["jobs"], dict) and doc["jobs"], (
             f"{path} must define at least one job"
         )

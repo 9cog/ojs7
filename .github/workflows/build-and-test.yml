@@ -271,7 +271,7 @@ jobs:
           fi
 
       - name: Lint
-        run: npm run lint --if-present || echo "Lint script not present or failed; continuing build."
+        run: npm run lint --if-present
         continue-on-error: true
 
       - name: Build

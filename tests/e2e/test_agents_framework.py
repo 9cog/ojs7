@@ -37,12 +37,30 @@ def test_unit_tests_directory_is_populated(repo_root: Path) -> None:
 
 
 def test_requirements_txt_lists_core_runtime_deps(repo_root: Path) -> None:
-    req = (repo_root / FRAMEWORK / "requirements.txt").read_text(encoding="utf-8")
+    req_path = repo_root / FRAMEWORK / "requirements.txt"
+    # Parse package names line-by-line so substrings like 'torch' don't
+    # accidentally match 'pytorch' or 'torchvision'.
+    declared: set[str] = set()
+    for raw_line in req_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.split("#", 1)[0].strip()
+        if not line or line.startswith("-"):
+            continue
+        # Strip any version specifier / extras to get the bare package name.
+        name = line
+        for sep in ("[", "=", "<", ">", "!", "~", " ", ";"):
+            idx = name.find(sep)
+            if idx != -1:
+                name = name[:idx]
+        name = name.strip().lower()
+        if name:
+            declared.add(name)
+
     # These are the dependency families the AI Engine Enforcement workflow
     # advertises as required for production AI inference. They should remain
     # declared even when alternative inference engines are added.
-    for needle in ("torch", "transformers", "llama-cpp-python"):
-        assert needle in req, (
-            f"requirements.txt no longer declares '{needle}'; update both this "
-            "test and .github/workflows/ai-validation.yml if this is intentional."
+    for required in ("torch", "transformers", "llama-cpp-python"):
+        assert required in declared, (
+            f"requirements.txt no longer declares '{required}'; update both this "
+            "test and .github/workflows/ai-validation.yml if this is intentional. "
+            f"Declared packages: {sorted(declared)}"
         )
