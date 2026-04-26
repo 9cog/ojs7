@@ -21,6 +21,7 @@ _OPTIONAL_DEPS_SIMPLE = [
     'redis',
     'aiohttp',
     'psutil',
+    'requests',
 ]
 for _dep in _OPTIONAL_DEPS_SIMPLE:
     if _dep not in sys.modules:

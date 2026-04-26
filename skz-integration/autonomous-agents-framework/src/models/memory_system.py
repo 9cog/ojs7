@@ -8,7 +8,12 @@ import sqlite3
 import hashlib
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional, Tuple, TYPE_CHECKING
-import numpy as np
+try:
+    import numpy as np
+    _NP_AVAILABLE = True
+except ImportError:
+    np = None  # type: ignore[assignment]
+    _NP_AVAILABLE = False
 from dataclasses import dataclass, asdict
 import pickle
 import threading
@@ -40,7 +45,7 @@ class VectorEmbedding:
     """Represents a vector embedding for semantic search"""
     id: str
     content_hash: str
-    embedding: np.ndarray
+    embedding: Any
     metadata: Dict[str, Any]
     created_at: datetime
 
@@ -246,7 +251,7 @@ class PersistentMemorySystem:
                 conn.commit()
                 return entries
     
-    def store_vector_embedding(self, content_hash: str, embedding: np.ndarray, 
+    def store_vector_embedding(self, content_hash: str, embedding: Any,
                              metadata: Dict[str, Any] = None) -> str:
         """
         Store a vector embedding for semantic search
@@ -287,7 +292,7 @@ class PersistentMemorySystem:
             logger.info(f"Stored vector embedding {embedding_id}")
             return embedding_id
     
-    def find_similar_vectors(self, query_embedding: np.ndarray, limit: int = 5) -> List[Tuple[str, float]]:
+    def find_similar_vectors(self, query_embedding: Any, limit: int = 5) -> List[Tuple[str, float]]:
         """
         Find similar vectors using cosine similarity
         
@@ -306,9 +311,16 @@ class PersistentMemorySystem:
                 similarities = []
                 for row in rows:
                     stored_embedding = pickle.loads(row['embedding'])
-                    similarity = np.dot(query_embedding, stored_embedding) / (
-                        np.linalg.norm(query_embedding) * np.linalg.norm(stored_embedding)
-                    )
+                    if _NP_AVAILABLE:
+                        similarity = np.dot(query_embedding, stored_embedding) / (
+                            np.linalg.norm(query_embedding) * np.linalg.norm(stored_embedding)
+                        )
+                    else:
+                        import math
+                        dot = sum(a * b for a, b in zip(query_embedding, stored_embedding))
+                        norm_q = math.sqrt(sum(a * a for a in query_embedding))
+                        norm_s = math.sqrt(sum(b * b for b in stored_embedding))
+                        similarity = dot / (norm_q * norm_s) if norm_q and norm_s else 0.0
                     similarities.append((row['id'], float(similarity)))
                 
                 # Sort by similarity and return top results

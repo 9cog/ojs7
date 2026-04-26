@@ -9,7 +9,12 @@ from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta
 from enum import Enum
-import networkx as nx
+try:
+    import networkx as nx
+    _NX_AVAILABLE = True
+except ImportError:
+    nx = None  # type: ignore[assignment]
+    _NX_AVAILABLE = False
 from collections import deque, defaultdict
 import heapq
 
@@ -156,24 +161,26 @@ class WorkflowOptimizer:
             logger.error(f"Error optimizing workflow: {e}")
             return OptimizationResult("", [], 0, {}, [], [], 0.0, [], datetime.now().isoformat())
     
-    async def _build_dependency_graph(self, tasks: List[WorkflowTask]) -> nx.DiGraph:
+    async def _build_dependency_graph(self, tasks: List[WorkflowTask]) -> Any:
         """Build task dependency graph"""
-        
+        if not _NX_AVAILABLE:
+            return None
+
         graph = nx.DiGraph()
-        
+
         # Add all tasks as nodes
         for task in tasks:
             graph.add_node(task.task_id, task_data=task)
-        
+
         # Add dependency edges
         for task in tasks:
             for dependency in task.dependencies:
                 if dependency in [t.task_id for t in tasks]:
                     graph.add_edge(dependency, task.task_id)
-        
+
         return graph
     
-    async def _calculate_critical_path(self, graph: nx.DiGraph, tasks: List[WorkflowTask]) -> List[str]:
+    async def _calculate_critical_path(self, graph: Any, tasks: List[WorkflowTask]) -> List[str]:
         """Calculate critical path through workflow"""
         
         try:
@@ -250,7 +257,7 @@ class WorkflowOptimizer:
     async def _generate_optimal_schedule(self, 
                                        workflow: WorkflowDefinition,
                                        agents: List[AgentResource],
-                                       dependency_graph: nx.DiGraph) -> List[Dict[str, Any]]:
+                                       dependency_graph: Any) -> List[Dict[str, Any]]:
         """Generate optimal task execution schedule"""
         
         schedule = []
@@ -470,6 +477,36 @@ class WorkflowOptimizer:
         
         return min(1.0, final_score)
     
+    async def optimize_task_schedule(self, tasks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Convenience method: schedule a list of task dicts in dependency order.
+
+        Each task dict may contain:
+          task_id, agent_id, estimated_duration, dependencies, priority, status.
+        Returns a list of tasks sorted by a simple topological order.
+        """
+        # Build dependency-respecting order via topological sort (Kahn's algorithm)
+        task_map = {t['task_id']: t for t in tasks}
+        in_degree: Dict[str, int] = {t['task_id']: 0 for t in tasks}
+        for t in tasks:
+            for dep in t.get('dependencies', []):
+                if dep in in_degree:
+                    in_degree[t['task_id']] = in_degree[t['task_id']] + 1
+
+        queue = deque(tid for tid, deg in in_degree.items() if deg == 0)
+        ordered: List[Dict[str, Any]] = []
+
+        while queue:
+            tid = queue.popleft()
+            ordered.append(task_map[tid])
+            for t in tasks:
+                if tid in t.get('dependencies', []):
+                    in_degree[t['task_id']] -= 1
+                    if in_degree[t['task_id']] == 0:
+                        queue.append(t['task_id'])
+
+        # Return original list if cycle detected (fallback)
+        return ordered if len(ordered) == len(tasks) else list(tasks)
+
     async def monitor_workflow_execution(self, workflow_id: str) -> Dict[str, Any]:
         """Monitor active workflow execution"""
         

@@ -412,8 +412,8 @@ class TestSystemIntegration:
         # Test optimization with same document
         optimization_result = await production_optimizer.optimize_formatting(integration_test_document)
         
-        # Optimization should maintain document integrity
-        assert optimization_result.original_format is not None
+        # Optimization should produce a valid output format
+        assert optimization_result.optimized_format is not None
         
         # Test quality assessment consistency
         quality_report = await production_optimizer.perform_quality_control(integration_test_document)

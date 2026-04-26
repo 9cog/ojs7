@@ -3,9 +3,10 @@ Simple validation test for urgent agent features
 Tests the core ML components without complex dependencies
 """
 
+import pytest
+np = pytest.importorskip("numpy")
 import sys
 import os
-import numpy as np
 from datetime import datetime
 import json
 

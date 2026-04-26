@@ -5,7 +5,12 @@ Phase 2 Critical Component - Provides ML capabilities for intelligent decision-m
 
 import json
 import os
-import numpy as np
+try:
+    import numpy as np
+    _NP_AVAILABLE = True
+except ImportError:
+    np = None  # type: ignore[assignment]
+    _NP_AVAILABLE = False
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime, timedelta
 import logging
@@ -392,7 +397,7 @@ class QualityAssessor:
             logger.info("Initializing new quality assessment model")
             self._initialize_dummy_model()
     
-    def extract_features(self, manuscript: Dict[str, Any]) -> np.ndarray:
+    def extract_features(self, manuscript: Dict[str, Any]) -> Any:
         """Extract features from manuscript"""
         features = []
         

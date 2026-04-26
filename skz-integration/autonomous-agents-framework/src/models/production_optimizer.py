@@ -178,7 +178,7 @@ class ProductionOptimizer:
         if target_format is None:
             # Use document's own format_type or call _predict_optimal_format
             prediction = self._predict_optimal_format(document)
-            target_format = prediction.get('recommended_format', document.format_type or FormatType.PDF)
+            target_format = prediction.get('recommended_format', getattr(document, 'format_type', None) or FormatType.PDF)
             confidence = float(prediction.get('confidence', 0.8))
             optimization_rules: List[str] = list(prediction.get('optimization_rules', []))
         else:
@@ -210,7 +210,7 @@ class ProductionOptimizer:
             logger.info(f"Applied {len(applied_rules)} formatting rules to document {document.document_id}")
 
             return OptimizationResult(
-                original_format=document.format_type,
+                original_format=getattr(document, 'format_type', None),
                 optimized_format=target_format,
                 confidence_score=confidence,
                 applied_optimizations=applied_rules,
@@ -219,7 +219,7 @@ class ProductionOptimizer:
         except Exception as e:
             logger.error(f"Error optimizing document formatting: {e}")
             return OptimizationResult(
-                original_format=document.format_type,
+                original_format=getattr(document, 'format_type', None),
                 optimized_format=target_format or FormatType.PDF,
                 confidence_score=0.0,
                 applied_optimizations=[],
@@ -228,7 +228,7 @@ class ProductionOptimizer:
     def _predict_optimal_format(self, document: Document) -> Dict[str, Any]:
         """Predict the optimal output format for a document (can be patched in tests)"""
         # Simple heuristic: prefer PDF unless metadata says otherwise
-        preferred = document.format_type or FormatType.PDF
+        preferred = getattr(document, 'format_type', None) or FormatType.PDF
         return {
             'recommended_format': preferred,
             'confidence': 0.8,

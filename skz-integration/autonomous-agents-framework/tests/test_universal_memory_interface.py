@@ -39,6 +39,7 @@ class TestUniversalMemoryInterface:
     
     def test_component_functionality_works(self):
         """Test that components work correctly with the new interface"""
+        np = pytest.importorskip("numpy")
         
         # Create components and memory system as specified in issue
         memory_system = PersistentMemorySystem(
@@ -49,7 +50,6 @@ class TestUniversalMemoryInterface:
         )
         
         # Test vector store functionality
-        import numpy as np
         test_embedding = np.random.rand(128)
         vector_id = memory_system.vector_store.store_vector("test_hash", test_embedding)
         assert vector_id is not None

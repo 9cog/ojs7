@@ -3,6 +3,8 @@ import sys
 import types
 from pathlib import Path
 
+import pytest
+
 SRC = Path(__file__).resolve().parents[2] / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
@@ -12,8 +14,10 @@ import models.model_registry as model_registry  # type: ignore
 
 class DummyModel:
     def predict_proba(self, X):
-        import numpy as np
-        return np.array([[0.12, 0.88] for _ in X])
+        # Returns a list-of-lists without requiring numpy so the test runs in
+        # lightweight environments; the DummyModel still faithfully represents
+        # a classifier that predicts class-1 probability 0.88.
+        return [[0.12, 0.88] for _ in X]
 
 def test_decision_engine_uses_local_model_prob(monkeypatch, tmp_path):
     class FakeJoblib(types.SimpleNamespace):  # type: ignore

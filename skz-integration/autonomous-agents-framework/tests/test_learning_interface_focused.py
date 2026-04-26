@@ -3,15 +3,16 @@ Focused test for Learning Framework Interface
 Minimal test to verify the exact requirement implementation
 """
 
+import pytest
 import sys
 import os
 import tempfile
 
+# Use real numpy instead of mocking
+np = pytest.importorskip("numpy")
+
 # Add src to path for testing
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
-
-# Use real numpy instead of mocking
-import numpy as np
 
 # Now import the learning framework 
 from models.learning_framework import (
