@@ -163,19 +163,21 @@ class WorkflowOptimizer:
     
     async def _build_dependency_graph(self, tasks: List[WorkflowTask]) -> Any:
         """Build task dependency graph"""
-        
-        graph = nx.DiGraph() if _NX_AVAILABLE else None
-        
+        if not _NX_AVAILABLE:
+            return None
+
+        graph = nx.DiGraph()
+
         # Add all tasks as nodes
         for task in tasks:
             graph.add_node(task.task_id, task_data=task)
-        
+
         # Add dependency edges
         for task in tasks:
             for dependency in task.dependencies:
                 if dependency in [t.task_id for t in tasks]:
                     graph.add_edge(dependency, task.task_id)
-        
+
         return graph
     
     async def _calculate_critical_path(self, graph: Any, tasks: List[WorkflowTask]) -> List[str]:
@@ -483,8 +485,6 @@ class WorkflowOptimizer:
         Returns a list of tasks sorted by a simple topological order.
         """
         # Build dependency-respecting order via topological sort (Kahn's algorithm)
-        from collections import deque as _deque
-
         task_map = {t['task_id']: t for t in tasks}
         in_degree: Dict[str, int] = {t['task_id']: 0 for t in tasks}
         for t in tasks:
@@ -492,7 +492,7 @@ class WorkflowOptimizer:
                 if dep in in_degree:
                     in_degree[t['task_id']] = in_degree[t['task_id']] + 1
 
-        queue = _deque(tid for tid, deg in in_degree.items() if deg == 0)
+        queue = deque(tid for tid, deg in in_degree.items() if deg == 0)
         ordered: List[Dict[str, Any]] = []
 
         while queue:

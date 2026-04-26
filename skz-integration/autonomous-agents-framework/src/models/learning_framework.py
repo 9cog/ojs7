@@ -320,11 +320,11 @@ class MetaLearner:
             # Analyze performance trends
             if len(self.performance_history) >= 5:
                 recent_performance = self.performance_history[-5:]
-                avg_performance = (sum(p['performance'].get('success_rate', 0.5) 
-                                       for p in recent_performance) / len(recent_performance)
-                                   if _NP_AVAILABLE is False else
-                                   np.mean([p['performance'].get('success_rate', 0.5) 
-                                           for p in recent_performance]))
+                avg_performance = (np.mean([p['performance'].get('success_rate', 0.5)
+                                            for p in recent_performance])
+                                   if _NP_AVAILABLE else
+                                   sum(p['performance'].get('success_rate', 0.5)
+                                       for p in recent_performance) / len(recent_performance))
                 
                 # Adjust learning parameters based on performance
                 strategy_adjustments = {}
@@ -367,8 +367,10 @@ class MetaLearner:
             
             insights = {
                 'current_performance': recent_performance[-1] if recent_performance else 0.5,
-                'average_performance': (np.mean(recent_performance) if _NP_AVAILABLE and recent_performance
-                                        else sum(recent_performance) / len(recent_performance) if recent_performance else 0.0),
+                'average_performance': (np.mean(recent_performance)
+                                        if _NP_AVAILABLE and recent_performance
+                                        else (sum(recent_performance) / len(recent_performance)
+                                              if recent_performance else 0.0)),
                 'performance_trend': 'improving' if len(recent_performance) >= 2 and 
                                    recent_performance[-1] > recent_performance[0] else 'stable',
                 'learning_efficiency': len(self.performance_history),
