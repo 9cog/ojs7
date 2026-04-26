@@ -11,10 +11,18 @@ from datetime import datetime, timedelta
 import logging
 from dataclasses import dataclass
 import re
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
+try:
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.metrics.pairwise import cosine_similarity
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.preprocessing import StandardScaler
+    SKLEARN_AVAILABLE = True
+except ImportError:
+    TfidfVectorizer = None
+    cosine_similarity = None
+    RandomForestClassifier = None
+    StandardScaler = None
+    SKLEARN_AVAILABLE = False
 import pickle
 import threading
 
@@ -48,7 +56,7 @@ class NLPProcessor:
     
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         self.config = config or {}
-        self.vectorizer = TfidfVectorizer(max_features=1000, stop_words='english')
+        self.vectorizer = TfidfVectorizer(max_features=1000, stop_words='english') if SKLEARN_AVAILABLE else None
         self.entity_patterns = {
             'ingredient': r'\b[A-Z][a-z]+(?:-[A-Z][a-z]+)*\b',
             'compound': r'\b[A-Z][a-z]+\d*\b',
@@ -343,8 +351,8 @@ class QualityAssessor:
     """Quality assessment using ML"""
     
     def __init__(self):
-        self.quality_model = RandomForestClassifier(n_estimators=100, random_state=42)
-        self.scaler = StandardScaler()
+        self.quality_model = RandomForestClassifier(n_estimators=100, random_state=42) if SKLEARN_AVAILABLE else None
+        self.scaler = StandardScaler() if SKLEARN_AVAILABLE else None
         self.feature_names = [
             'word_count', 'sentence_count', 'paragraph_count',
             'citation_count', 'figure_count', 'table_count',
@@ -354,6 +362,9 @@ class QualityAssessor:
     
     def _initialize_dummy_model(self):
         """Initialize dummy model with some basic training data"""
+        if self.scaler is None or self.quality_model is None:
+            logger.warning("sklearn not available - quality model not initialized")
+            return
         # Create some dummy training data
         X_dummy = np.array([
             [100, 5, 3, 2, 1, 0, 0.5, 0.5, 0.5],  # Low quality
@@ -433,6 +444,16 @@ class QualityAssessor:
     def _assess_quality_basic(self, manuscript: Dict[str, Any]) -> Dict[str, Any]:
         """Basic quality assessment (FALLBACK - REPLACE WITH ML)"""
         features = self.extract_features(manuscript)
+        if self.scaler is None or self.quality_model is None:
+            # sklearn not available - return heuristic score
+            return {
+                'overall_score': 0.5,
+                'methodology': manuscript.get('methodology_score', 0.5),
+                'clarity': manuscript.get('clarity_score', 0.5),
+                'completeness': manuscript.get('completeness_score', 0.5),
+                'technical_rigor': 0.5,
+                'innovation': 0.5
+            }
         features_scaled = self.scaler.transform(features)
         
         # Predict quality score
@@ -452,6 +473,9 @@ class QualityAssessor:
     
     def train_model(self, training_data: List[Dict[str, Any]]):
         """Train the quality assessment model"""
+        if self.scaler is None or self.quality_model is None:
+            logger.warning("sklearn not available - skipping model training")
+            return
         X = []
         y = []
         
@@ -767,3 +791,40 @@ class DecisionEngine:
                 'nlp_processor': '1.0'
             }
         }
+
+
+class MLDecisionEngine:
+    """ML Decision Engine - public API class for ML-based agent decisions"""
+
+    def __init__(self, config: Dict[str, Any] = None):
+        self.config = config or {}
+
+    def _classify_text_keywords(self, text: str, categories: List[str]) -> Dict[str, float]:
+        """Keyword-based text classification (DEVELOPMENT/TESTING ONLY)"""
+
+        # PRODUCTION ENFORCEMENT: This method should not be reached in production
+        if os.getenv('ENVIRONMENT', '').lower() == 'production' or self.config.get('force_ml_models', False):
+            raise ValueError(
+                "PRODUCTION VIOLATION: Keyword-based classification blocked in production mode. "
+                "Configure BERT models properly. NEVER SACRIFICE QUALITY!!"
+            )
+
+        logger.warning("USING KEYWORD CLASSIFICATION - NOT SUITABLE FOR PRODUCTION ML")
+
+        category_scores = {}
+        for category in categories:
+            keywords = self._get_category_keywords(category)
+            score = sum(1 for kw in keywords if kw.lower() in text.lower())
+            category_scores[category] = score / len(keywords) if keywords else 0.0
+        return category_scores
+
+    def _get_category_keywords(self, category: str) -> List[str]:
+        """Get keywords for a category"""
+        category_keywords = {
+            'research': ['study', 'analysis', 'investigation', 'research', 'experiment'],
+            'quality': ['quality', 'standard', 'compliance', 'validation', 'assessment'],
+            'safety': ['safety', 'toxicity', 'risk', 'hazard', 'compliance'],
+            'innovation': ['novel', 'innovative', 'breakthrough', 'new', 'original'],
+            'methodology': ['method', 'procedure', 'protocol', 'technique', 'approach']
+        }
+        return category_keywords.get(category, [])

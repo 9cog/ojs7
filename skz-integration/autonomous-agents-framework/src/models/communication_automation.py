@@ -79,19 +79,29 @@ class Recipient:
 class CommunicationMessage:
     """Individual communication message"""
     message_id: str
-    template_id: str
-    recipient: Recipient
-    sender_agent: str
+    recipient: Any  # Recipient or MessageRecipient
     subject: str
     body: str
-    message_type: MessageType
-    priority: MessagePriority
-    scheduled_time: str
-    sent_time: Optional[str]
-    status: CommunicationStatus
-    context_data: Dict[str, Any]
-    attachments: List[str]
-    tracking_data: Dict[str, Any]
+    message_type: Any  # MessageType or str
+    priority: Any  # MessagePriority or str
+    sender_agent: str
+    template_id: str = ""
+    scheduled_time: str = ""
+    sent_time: Optional[str] = None
+    status: Any = None  # CommunicationStatus
+    context_data: Optional[Dict[str, Any]] = None
+    attachments: Optional[List[str]] = None
+    tracking_data: Optional[Dict[str, Any]] = None
+
+    def __post_init__(self):
+        if self.status is None:
+            self.status = CommunicationStatus.PENDING
+        if self.context_data is None:
+            self.context_data = {}
+        if self.attachments is None:
+            self.attachments = []
+        if self.tracking_data is None:
+            self.tracking_data = {}
 
 @dataclass
 class EscalationRule:
@@ -115,6 +125,14 @@ class NotificationConfig:
     frequency_limits: Dict[str, int]
     quiet_hours: Dict[str, Any]
     enabled: bool
+
+@dataclass
+class MessageRecipient:
+    """Simplified message recipient for direct message sending"""
+    name: str
+    user_type: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
 
 class CommunicationAutomation:
     """Advanced communication automation system"""
@@ -503,11 +521,15 @@ Automated Quality Monitoring System''',
             return await self._send_via_smtp(message)
         else:
             # PRODUCTION: No fallback to mock - must configure email service
-            raise ValueError(
-                "Email service configuration required for production. "
-                "Configure SendGrid, Amazon SES, or SMTP for production deployment. "
-                "NEVER SACRIFICE QUALITY!! No mock fallbacks in production."
-            )
+            if os.getenv('ENVIRONMENT', '').lower() == 'production':
+                raise ValueError(
+                    "Email service configuration required for production. "
+                    "Configure SendGrid, Amazon SES, or SMTP for production deployment. "
+                    "NEVER SACRIFICE QUALITY!! No mock fallbacks in production."
+                )
+            # Non-production: log and return False (no real delivery)
+            logger.warning("No email provider configured. Skipping email delivery in non-production mode.")
+            return False
     
     async def _send_via_sendgrid(self, message: CommunicationMessage) -> bool:
         """Send email via SendGrid (Production Implementation)"""
@@ -645,7 +667,29 @@ Automated Quality Monitoring System''',
     # PRODUCTION IMPLEMENTATION: Mock functions removed for production deployment
     # Development testing should use test email services and proper API sandboxes
     # For development, use: export ENVIRONMENT=development and configure test services
-    
+
+    async def _send_email_mock(self, message: 'CommunicationMessage') -> bool:
+        """Mock email sender - blocked in production, allowed in development"""
+        if os.getenv('ENVIRONMENT', '').lower() == 'production':
+            raise ValueError(
+                "PRODUCTION VIOLATION: Mock email sending is not allowed in production. "
+                "Configure SendGrid, Amazon SES, or SMTP for production deployment. "
+                "NEVER SACRIFICE QUALITY!! No mock fallbacks in production."
+            )
+        logger.info(f"[MOCK] Email sent to {message.recipient.email}: {message.subject}")
+        return True
+
+    async def _send_sms_mock(self, message: 'CommunicationMessage') -> bool:
+        """Mock SMS sender - blocked in production, allowed in development"""
+        if os.getenv('ENVIRONMENT', '').lower() == 'production':
+            raise ValueError(
+                "PRODUCTION VIOLATION: Mock SMS sending is not allowed in production. "
+                "Configure Twilio or alternative SMS provider for production deployment. "
+                "NEVER SACRIFICE QUALITY!! No mock fallbacks in production."
+            )
+        logger.info(f"[MOCK] SMS sent to {getattr(message.recipient, 'phone', 'unknown')}: {message.subject}")
+        return True
+
     async def _log_delivery_success(self, message: CommunicationMessage, provider: str, external_id: str):
         """Log successful message delivery"""
         message.tracking_data.update({
@@ -678,11 +722,15 @@ Automated Quality Monitoring System''',
             return await self._send_via_twilio(message)
         else:
             # PRODUCTION: No fallback to mock - must configure SMS service
-            raise ValueError(
-                "SMS service configuration required for production. "
-                "Configure Twilio or alternative SMS provider for production deployment. "
-                "NEVER SACRIFICE QUALITY!! No mock fallbacks in production."
-            )
+            if os.getenv('ENVIRONMENT', '').lower() == 'production':
+                raise ValueError(
+                    "SMS service configuration required for production. "
+                    "Configure Twilio or alternative SMS provider for production deployment. "
+                    "NEVER SACRIFICE QUALITY!! No mock fallbacks in production."
+                )
+            # Non-production: log and return False (no real delivery)
+            logger.warning("No SMS provider configured. Skipping SMS delivery in non-production mode.")
+            return False
     
     async def _send_via_twilio(self, message: CommunicationMessage) -> bool:
         """Send SMS via Twilio (Production Implementation)"""

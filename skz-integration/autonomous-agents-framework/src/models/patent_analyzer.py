@@ -274,7 +274,29 @@ class PatentAnalyzer:
     # PRODUCTION IMPLEMENTATION: Mock functions removed for production deployment
     # Development testing should use test databases and proper API sandboxes
     # For development, use: export ENVIRONMENT=development and configure test APIs
-    
+
+    async def _search_uspto_mock(self, query: str, date_range: Optional[Tuple[str, str]], limit: int) -> List[PatentDocument]:
+        """Mock USPTO search - blocked in production, allowed in development"""
+        if os.getenv('ENVIRONMENT', '').lower() == 'production':
+            raise ValueError(
+                "PRODUCTION VIOLATION: Mock USPTO search is not allowed in production. "
+                "Configure uspto_api_key and set use_production_apis=True. "
+                "NEVER SACRIFICE QUALITY!! No mock fallbacks in production."
+            )
+        logger.info(f"[MOCK] USPTO search: {query}")
+        return []
+
+    async def _search_google_patents_mock(self, query: str, date_range: Optional[Tuple[str, str]], limit: int) -> List[PatentDocument]:
+        """Mock Google Patents search - blocked in production, allowed in development"""
+        if os.getenv('ENVIRONMENT', '').lower() == 'production':
+            raise ValueError(
+                "PRODUCTION VIOLATION: Mock Google Patents search is not allowed in production. "
+                "Configure google_cloud_credentials and set use_production_apis=True. "
+                "NEVER SACRIFICE QUALITY!! No mock fallbacks in production."
+            )
+        logger.info(f"[MOCK] Google Patents search: {query}")
+        return []
+
     async def _search_google_patents(self, query: str, date_range: Optional[Tuple[str, str]], limit: int) -> List[PatentDocument]:
         """Search Google Patents"""
         
