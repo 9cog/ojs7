@@ -745,16 +745,15 @@ class ResearchVectorDatabase:
             score = self._keyword_similarity(query_words, doc)
             scored.append((score, doc))
 
-        # Sort by descending score and return top results (threshold not applied when using keyword search)
+        # Sort by descending score; return documents with positive score first,
+        # or any document if none matched keywords.
         scored.sort(key=lambda x: x[0], reverse=True)
+        positive = [(s, d) for s, d in scored if s > 0]
+        selection = positive[:limit] if positive else scored[:limit]
 
         return [
             SearchResult(document=doc, similarity_score=round(score, 4))
-            for score, doc in scored[:limit]
-            if score > 0
-        ] or [
-            SearchResult(document=doc, similarity_score=round(score, 4))
-            for score, doc in scored[:limit]
+            for score, doc in selection
         ]
 
     # ------------------------------------------------------------------

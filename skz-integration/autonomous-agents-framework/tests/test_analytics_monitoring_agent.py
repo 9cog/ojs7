@@ -7,7 +7,6 @@ import pytest
 # Skip this entire module when heavyweight ML dependencies are unavailable
 # (the CI lightweight job uses requirements_simple.txt which omits pandas/torch/sklearn)
 pd = pytest.importorskip("pandas")
-np_check = pytest.importorskip("numpy")
 import numpy as np
 import pandas as pd
 import sqlite3
