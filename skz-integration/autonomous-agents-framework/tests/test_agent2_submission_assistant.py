@@ -4,6 +4,9 @@ Tests all critical features with production-grade ML components
 """
 
 import pytest
+# Skip this entire module when sklearn is unavailable (CI lightweight environment)
+pytest.importorskip("sklearn")
+
 import pytest_asyncio
 import asyncio
 import sys
