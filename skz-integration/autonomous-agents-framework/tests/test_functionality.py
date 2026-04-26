@@ -16,70 +16,66 @@ def test_enhanced_agent_mock():
     
     print("Testing Enhanced Review Coordination Agent...")
     
-    # Mock the heavy dependencies
-    with patch('models.automated_coordination_engine.AutomatedCoordinationEngine'):
-        with patch('models.ojs_coordination_integrator.OJSCoordinationIntegrator'):
-            
-            # Import after mocking
-            sys.path.append('/home/runner/work/oj7/oj7/skz-integration/microservices/review-coordination')
-            from app import EnhancedReviewCoordinationAgent
-            
-            # Test agent initialization
-            agent = EnhancedReviewCoordinationAgent()
-            print("✓ Agent initialized successfully")
-            
-            # Test agent capabilities
-            agent_data = agent.get_agent_data()
-            assert 'automated_coordination' in agent_data['capabilities']
-            assert 'ojs_integration' in agent_data['capabilities']
-            assert agent_data['version'] == '2.0-automated'
-            print("✓ Agent capabilities verified")
-            
-            # Test coordination action
-            test_data = {
-                'action_type': 'coordinate',
-                'manuscript': {
-                    'id': 'test_manuscript',
-                    'title': 'Test Paper',
-                    'subject_areas': ['AI', 'ML']
-                }
-            }
-            
-            result = agent.process_action(test_data)
-            assert result['coordination_initiated'] is True
-            assert result['automation_level'] == 'full'
-            assert 'estimated_completion' in result
-            print("✓ Coordination action processed successfully")
-            
-            # Test status action
-            status_data = {
-                'action_type': 'status'
-            }
-            
-            result = agent.process_action(status_data)
-            assert 'automation_success_rate' in result
-            assert 'system_health' in result
-            print("✓ Status action processed successfully")
-            
-            # Test metrics action
-            metrics_data = {
-                'action_type': 'metrics'
-            }
-            
-            result = agent.process_action(metrics_data)
-            assert 'total_coordinated' in result
-            assert 'success_rate' in result
-            assert 'timeline_adherence' in result
-            print("✓ Metrics action processed successfully")
-            
-            print(f"\nAgent Data Summary:")
-            print(f"- ID: {agent_data['id']}")
-            print(f"- Name: {agent_data['name']}")
-            print(f"- Version: {agent_data['version']}")
-            print(f"- Capabilities: {len(agent_data['capabilities'])}")
-            print(f"- Automation Enabled: {agent_data['coordination_stats']['automation_enabled']}")
-            
-            return True
+    # Import after adding the path (app.py uses its own mock classes, no external patches needed)
+    sys.path.append('/home/runner/work/ojs7/ojs7/skz-integration/microservices/review-coordination')
+    from app import EnhancedReviewCoordinationAgent
+    
+    # Test agent initialization
+    agent = EnhancedReviewCoordinationAgent()
+    print("✓ Agent initialized successfully")
+    
+    # Test agent capabilities
+    agent_data = agent.get_agent_data()
+    assert 'automated_coordination' in agent_data['capabilities']
+    assert 'ojs_integration' in agent_data['capabilities']
+    assert agent_data['version'] == '2.0-automated'
+    print("✓ Agent capabilities verified")
+    
+    # Test coordination action
+    test_data = {
+        'action_type': 'coordinate',
+        'manuscript': {
+            'id': 'test_manuscript',
+            'title': 'Test Paper',
+            'subject_areas': ['AI', 'ML']
+        }
+    }
+    
+    result = agent.process_action(test_data)
+    assert result['coordination_initiated'] is True
+    assert result['automation_level'] == 'full'
+    assert 'estimated_completion' in result
+    print("✓ Coordination action processed successfully")
+    
+    # Test status action
+    status_data = {
+        'action_type': 'status'
+    }
+    
+    result = agent.process_action(status_data)
+    assert 'automation_success_rate' in result
+    assert 'system_health' in result
+    print("✓ Status action processed successfully")
+    
+    # Test metrics action
+    metrics_data = {
+        'action_type': 'metrics'
+    }
+    
+    result = agent.process_action(metrics_data)
+    assert 'total_coordinated' in result
+    assert 'success_rate' in result
+    assert 'timeline_adherence' in result
+    print("✓ Metrics action processed successfully")
+    
+    print(f"\nAgent Data Summary:")
+    print(f"- ID: {agent_data['id']}")
+    print(f"- Name: {agent_data['name']}")
+    print(f"- Version: {agent_data['version']}")
+    print(f"- Capabilities: {len(agent_data['capabilities'])}")
+    print(f"- Automation Enabled: {agent_data['coordination_stats']['automation_enabled']}")
+    
+    return True
 
 def test_coordination_engine_concepts():
     """Test coordination engine concepts without full implementation"""

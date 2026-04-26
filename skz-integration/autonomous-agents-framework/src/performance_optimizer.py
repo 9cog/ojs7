@@ -87,6 +87,8 @@ class PerformanceOptimizer:
                 self.metrics_collector.record_cache_hit(agent_id, operation)
                 return cached_result
             
+            self.metrics_collector.record_cache_miss(agent_id, operation)
+            
             # Process with optimization
             with self.connection_pool.get_connection() as conn:
                 result = self._process_optimized_operation(agent_id, operation, data, conn)
@@ -231,11 +233,13 @@ class CacheManager:
         try:
             if self.redis_client:
                 value = self.redis_client.get(key)
-                return json.loads(value) if value else None
-            else:
-                return self.local_cache.get(key)
+                result = json.loads(value) if value else None
+                if result is not None:
+                    return result
+            # Fall back to local cache (also used when Redis is unavailable or fails)
+            return self.local_cache.get(key)
         except Exception:
-            return None
+            return self.local_cache.get(key)
     
     def set(self, key: str, value: Any, ttl: int = None) -> bool:
         """Set cached value"""
@@ -243,11 +247,13 @@ class CacheManager:
             ttl = ttl or self.config.get('default_ttl', 300)
             
             if self.redis_client:
-                return self.redis_client.setex(key, ttl, json.dumps(value))
-            else:
-                # Local cache with simple TTL simulation
-                self.local_cache[key] = value
-                return True
+                try:
+                    self.redis_client.setex(key, ttl, json.dumps(value))
+                except Exception:
+                    pass
+            # Always update local cache as reliable fallback
+            self.local_cache[key] = value
+            return True
         except Exception:
             return False
     
@@ -532,7 +538,10 @@ class MemoryOptimizer:
         # Use weak references for temporary objects
         if 'temp_objects' in data:
             for obj_id, obj in data['temp_objects'].items():
-                self.weak_references[obj_id] = obj
+                try:
+                    self.weak_references[obj_id] = obj
+                except TypeError:
+                    pass  # Skip objects that don't support weak references
         
         return data
     

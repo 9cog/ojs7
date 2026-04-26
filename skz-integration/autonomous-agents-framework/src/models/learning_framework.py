@@ -426,6 +426,13 @@ class LearningFramework:
         self.db_path = db_path
         self.lock = threading.RLock()
         
+        # For :memory: databases, keep a persistent connection since each
+        # sqlite3.connect(":memory:") call creates a new, independent database
+        if db_path == ':memory:':
+            self._persistent_conn = sqlite3.connect(':memory:', check_same_thread=False)
+        else:
+            self._persistent_conn = None
+        
         # Use provided learners or create new ones
         self.reinforcement_learner = reinforcement_learner if reinforcement_learner is not None else ReinforcementLearner(agent_id)
         self.supervised_learner = supervised_learner if supervised_learner is not None else SupervisedLearner(agent_id)
@@ -434,9 +441,16 @@ class LearningFramework:
         
         self._init_database()
         
+    def _get_connection(self):
+        """Get a database connection (persistent for :memory:, new for file-based)"""
+        if self._persistent_conn is not None:
+            return self._persistent_conn
+        return sqlite3.connect(self.db_path)
+
     def _init_database(self):
         """Initialize learning database"""
-        with sqlite3.connect(self.db_path) as conn:
+        conn = self._get_connection()
+        try:
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS learning_experiences (
                     id TEXT PRIMARY KEY,
@@ -470,6 +484,9 @@ class LearningFramework:
             conn.execute("CREATE INDEX IF NOT EXISTS idx_pattern_agent ON learning_patterns(agent_id)")
             
             conn.commit()
+        finally:
+            if self._persistent_conn is None:
+                conn.close()
     
     def learn_from_experience(self, action_type: str, input_data: Dict[str, Any],
                              output_data: Dict[str, Any], success: bool,
@@ -493,7 +510,8 @@ class LearningFramework:
             )
             
             # Store in database
-            with sqlite3.connect(self.db_path) as conn:
+            conn = self._get_connection()
+            try:
                 conn.execute("""
                     INSERT INTO learning_experiences 
                     (id, agent_id, action_type, input_data, output_data, success, performance_metrics, feedback, created_at)
@@ -510,6 +528,9 @@ class LearningFramework:
                     experience.created_at.isoformat()
                 ))
                 conn.commit()
+            finally:
+                if self._persistent_conn is None:
+                    conn.close()
             
             # Update learning components
             self._update_learning_components(experience)
@@ -576,7 +597,8 @@ class LearningFramework:
     def get_learning_stats(self) -> Dict[str, Any]:
         """Get learning framework statistics"""
         with self.lock:
-            with sqlite3.connect(self.db_path) as conn:
+            conn = self._get_connection()
+            try:
                 # Experience stats
                 cursor = conn.execute("""
                     SELECT COUNT(*) FROM learning_experiences WHERE agent_id = ?
@@ -605,6 +627,9 @@ class LearningFramework:
                     'learning_efficiency': self.meta_learner.get_learning_insights()['learning_efficiency'],
                     'current_performance': self.meta_learner.get_learning_insights()['current_performance']
                 }
+            finally:
+                if self._persistent_conn is None:
+                    conn.close()
     
     def save_learning_state(self, filepath: str):
         """Save learning state to file"""
