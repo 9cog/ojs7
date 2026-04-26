@@ -3,17 +3,38 @@ Health Monitoring System for SKZ Autonomous Agents Framework
 Provides comprehensive health checks for all system components
 """
 import asyncio
-import aiohttp
 import json
 import time
-import psutil
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, asdict
-import redis
-import mysql.connector
-from mysql.connector import Error
+
+try:
+    import aiohttp
+    AIOHTTP_AVAILABLE = True
+except ImportError:
+    AIOHTTP_AVAILABLE = False
+
+try:
+    import psutil
+    PSUTIL_AVAILABLE = True
+except ImportError:
+    PSUTIL_AVAILABLE = False
+
+try:
+    import redis as redis_module
+    REDIS_AVAILABLE = True
+except ImportError:
+    redis_module = None  # type: ignore[assignment]
+    REDIS_AVAILABLE = False
+
+try:
+    import mysql.connector as mysql_connector
+    MYSQL_AVAILABLE = True
+except ImportError:
+    mysql_connector = None  # type: ignore[assignment]
+    MYSQL_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -47,9 +68,12 @@ class HealthMonitor:
         
     async def initialize_connections(self):
         """Initialize external service connections"""
+        if not REDIS_AVAILABLE:
+            self.redis_client = None
+            return
         try:
             # Initialize Redis connection
-            self.redis_client = redis.Redis(
+            self.redis_client = redis_module.Redis(
                 host=self.config.get('redis', {}).get('host', 'localhost'),
                 port=self.config.get('redis', {}).get('port', 6379),
                 db=self.config.get('redis', {}).get('db', 0),
@@ -67,6 +91,16 @@ class HealthMonitor:
         """Check health of individual service"""
         start_time = time.time()
         
+        if not AIOHTTP_AVAILABLE:
+            return HealthStatus(
+                service=service_name,
+                status='unhealthy',
+                response_time=0.0,
+                timestamp=datetime.now().isoformat(),
+                details={},
+                error="aiohttp not available"
+            )
+
         try:
             async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=10)) as session:
                 async with session.get(url) as response:
@@ -75,7 +109,7 @@ class HealthMonitor:
                     if response.status == 200:
                         try:
                             response_data = await response.json()
-                        except:
+                        except Exception:
                             response_data = {}
                         
                         return HealthStatus(
@@ -97,7 +131,7 @@ class HealthMonitor:
                             details={'http_status': response.status},
                             error=f"HTTP {response.status}"
                         )
-                        
+                         
         except asyncio.TimeoutError:
             return HealthStatus(
                 service=service_name,
@@ -121,9 +155,19 @@ class HealthMonitor:
         """Check MySQL database health"""
         start_time = time.time()
         
+        if not MYSQL_AVAILABLE:
+            return HealthStatus(
+                service='mysql_database',
+                status='unhealthy',
+                response_time=0.0,
+                timestamp=datetime.now().isoformat(),
+                details={},
+                error="mysql-connector-python not available"
+            )
+
         try:
             db_config = self.config.get('database', {})
-            connection = mysql.connector.connect(
+            connection = mysql_connector.connect(
                 host=db_config.get('host', 'localhost'),
                 port=db_config.get('port', 3306),
                 user=db_config.get('user', 'root'),
@@ -152,15 +196,6 @@ class HealthMonitor:
                     }
                 )
                 
-        except Error as e:
-            return HealthStatus(
-                service='mysql_database',
-                status='unhealthy',
-                response_time=time.time() - start_time,
-                timestamp=datetime.now().isoformat(),
-                details={},
-                error=f"MySQL Error: {e}"
-            )
         except Exception as e:
             return HealthStatus(
                 service='mysql_database',
@@ -171,14 +206,21 @@ class HealthMonitor:
                 error=str(e)
             )
     
-    async def check_redis_health(self) -> HealthStatus:
+    def check_redis_health(self) -> HealthStatus:
         """Check Redis health"""
         start_time = time.time()
         
         try:
             if self.redis_client is None:
-                await self.initialize_connections()
-            
+                return HealthStatus(
+                    service='redis',
+                    status='unhealthy',
+                    response_time=time.time() - start_time,
+                    timestamp=datetime.now().isoformat(),
+                    details={},
+                    error="Redis connection not initialized"
+                )
+
             if self.redis_client:
                 # Test basic operations
                 test_key = f"health_check_{int(time.time())}"
@@ -235,6 +277,16 @@ class HealthMonitor:
     def check_system_resources(self) -> HealthStatus:
         """Check system resource utilization"""
         start_time = time.time()
+
+        if not PSUTIL_AVAILABLE:
+            return HealthStatus(
+                service='system_resources',
+                status='unhealthy',
+                response_time=0.0,
+                timestamp=datetime.now().isoformat(),
+                details={},
+                error="psutil not available"
+            )
         
         try:
             # Get system metrics

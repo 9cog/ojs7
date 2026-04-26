@@ -1,13 +1,33 @@
 """
 Test configuration and fixtures for the SKZ Agents Framework
 """
+import sys
 import pytest
 import asyncio
 import json
-from unittest.mock import Mock, AsyncMock
+from unittest.mock import Mock, AsyncMock, MagicMock
 from datetime import datetime
 import tempfile
 import os
+
+# ---------------------------------------------------------------------------
+# Inject stub modules for optional dependencies that are not installed in the
+# lightweight CI environment so that:
+#   1. Source modules can be imported (try/except ImportError succeeds)
+#   2. Tests that patch these modules (e.g. `patch('redis.Redis')`) work
+# This must happen before any test module (or source module) is imported.
+# ---------------------------------------------------------------------------
+_OPTIONAL_DEPS = [
+    'redis',
+    'aiohttp',
+    'psutil',
+    'mysql',
+    'mysql.connector',
+    'mysql.connector.errors',
+]
+for _dep in _OPTIONAL_DEPS:
+    if _dep not in sys.modules:
+        sys.modules[_dep] = MagicMock()
 
 @pytest.fixture
 def event_loop():

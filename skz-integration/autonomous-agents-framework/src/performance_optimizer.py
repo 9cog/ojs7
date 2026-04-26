@@ -274,6 +274,11 @@ class DatabaseOptimizer:
     def __init__(self, config: Dict[str, Any]):
         self.config = config
         self.db_path = config.get('path', 'src/database/app.db')
+        # Ensure the directory exists before opening sqlite
+        import os
+        db_dir = os.path.dirname(self.db_path)
+        if db_dir:
+            os.makedirs(db_dir, exist_ok=True)
         self._setup_database()
     
     def _setup_database(self):
@@ -360,7 +365,10 @@ class ConnectionPool:
                 if self._connections:
                     conn = self._connections.pop()
                 else:
-                    conn = sqlite3.connect('src/database/app.db', check_same_thread=False)
+                    import os
+                    db_path = 'src/database/app.db'
+                    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+                    conn = sqlite3.connect(db_path, check_same_thread=False)
             
             yield conn
             

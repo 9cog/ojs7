@@ -8,17 +8,36 @@ import numpy as np
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime, timedelta
 import logging
-from dataclasses import dataclass
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingRegressor
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.feature_extraction.text import TfidfVectorizer
+from dataclasses import dataclass, field
 import math
 from collections import defaultdict
 
-from .enhanced_agent import EnhancedAgent
-from .memory_system import PersistentMemorySystem
-from .ml_decision_engine import DecisionEngine, DecisionContext
+try:
+    from sklearn.ensemble import RandomForestClassifier, GradientBoostingRegressor
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    SKLEARN_AVAILABLE = True
+except ImportError:
+    SKLEARN_AVAILABLE = False
+    TfidfVectorizer = None  # type: ignore[assignment,misc]
+
+try:
+    from .enhanced_agent import EnhancedAgent
+    from .memory_system import PersistentMemorySystem
+    from .ml_decision_engine import DecisionEngine, DecisionContext
+    ENHANCED_COMPONENTS_AVAILABLE = True
+except ImportError:
+    ENHANCED_COMPONENTS_AVAILABLE = False
+
+    class EnhancedAgent:  # minimal fallback
+        def __init__(self, agent_id: str = "", agent_type: str = "", capabilities=None):
+            self.agent_id = agent_id
+            self.agent_type = agent_type
+            self.capabilities = capabilities or []
+            self.memory_system = None
+            self.decision_engine = None
+            self.learning_framework = None
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +93,7 @@ class MatchingResult:
     estimated_review_time: int
     priority_score: float
     match_timestamp: str
+    metadata: Optional[Dict[str, Any]] = None
 
 @dataclass
 class ReviewQualityPrediction:
@@ -95,6 +115,15 @@ class WorkloadOptimization:
     bottleneck_resolution: List[str]
     timeline_prediction: Dict[int, int]
 
+
+@dataclass
+class OptimizationResult:
+    """Result from assignment optimization"""
+    assignments: Dict[str, Any] = field(default_factory=dict)
+    optimization_score: float = 0.0
+    unassigned_manuscripts: List[str] = field(default_factory=list)
+    statistics: Dict[str, Any] = field(default_factory=dict)
+
 class ReviewerMatcher:
     """Critical Feature 1: Reviewer Matching ML"""
     
@@ -102,7 +131,7 @@ class ReviewerMatcher:
         self.expertise_analyzer = self._initialize_expertise_analyzer()
         self.workload_optimizer = self._initialize_workload_optimizer()
         self.quality_predictor = self._initialize_quality_predictor()
-        self.vectorizer = TfidfVectorizer(max_features=500, stop_words='english')
+        self.vectorizer = TfidfVectorizer(max_features=500, stop_words='english') if SKLEARN_AVAILABLE and TfidfVectorizer is not None else None
         self.match_history = []
         
     def _initialize_expertise_analyzer(self) -> Dict[str, Any]:
@@ -1110,10 +1139,6 @@ class ReviewCoordinationAgent(EnhancedAgent):
         except Exception as e:
             logger.error(f"Error calculating coordination score: {e}")
             return 0.5
-            'review_quality': 0.4,
-            'reliability': 0.3,
-            'response_rate': 0.3
-        }
         
         # Subject area hierarchies for cosmetic science
         self.subject_hierarchies = {
